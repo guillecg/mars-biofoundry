@@ -45,6 +45,7 @@ results_filepath = f"{FILE}-{ORGANISM}.csv"
 pd.DataFrame(columns=results_columns).to_csv(
     results_filepath,
     header=True,
+    index=False,
     sep=";",
     mode="w"
 )
@@ -102,6 +103,7 @@ for pathway in s.pathwayIds:
     pathway_df.to_csv(
         results_filepath,
         header=False,
+        index=False,
         sep=";",
         mode="a"
     )
