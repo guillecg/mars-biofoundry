@@ -67,6 +67,12 @@ for pathway in s.pathwayIds:
 
     pathway_df = pd.DataFrame(columns=results_columns)
 
+    # There may be errors due to pathways lacking any modules
+    # TODO: try extracting EC from ko_res["MODULE"]
+    if "MODULE" not in pathway_res.keys():
+        logger.warning(f"No reactions found for {module}")
+        continue
+
     # Retrieve info for all the modules in the KO pathway
     for module in pathway_res["MODULE"].keys():
 
@@ -75,7 +81,7 @@ for pathway in s.pathwayIds:
         module_res = s.get(module)
         module_res = s.parse(module_res)
 
-        # There may be errors due to pathways lacking any modules
+        # There may be errors due to modules lacking any reactions
         # TODO: try extracting EC from module_res["ORTHOLOGY"]
         if "REACTION" not in module_res.keys():
             logger.warning(f"No reactions found for {module}")
