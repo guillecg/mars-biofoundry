@@ -50,8 +50,13 @@ pd.DataFrame(columns=results_columns).to_csv(
     mode="w"
 )
 
-# To avoid errors (e.g. missing modules in pathways) follow this process:
-# Pathway > KO pathway > modules
+# NOTE: In order to retrieve information from RetroRules, we need either the
+# reaction numbers or the ECs. The bioservices package retrieves, among other
+# information, modules for the given pathway in case they are available.
+# Modules are important because they contain reaction numbers. However, some 
+# pathways may lack any modules and, thus, the information regarding the 
+# reactions. Genes (EC numbers) information is not present either.
+
 for pathway in s.pathwayIds:
 
     logger.info(f"Starting with pathway {pathway}")
@@ -74,6 +79,7 @@ for pathway in s.pathwayIds:
         module_res = s.get(module)
         module_res = s.parse(module_res)
 
+        # There may be errors due to pathways lacking any modules
         # TODO: try extracting EC from module_res["ORTHOLOGY"]
         if "REACTION" not in module_res.keys():
             logger.warning(f"No reactions found for {module}")
@@ -83,17 +89,17 @@ for pathway in s.pathwayIds:
 
         for key in reaction_keys:
             # Concatenate results to final dataframe
-            row_df = pd.DataFrame({
-                "ORGANISM": [pathway_res["ORGANISM"]],
-                "PATHWAY_NAME": [pathway_res["NAME"]],
-                "KO_PATHWAY": [pathway_res["KO_PATHWAY"]],
-                "MODULE": [module],
-                "MODULE_NAME": [module_res["NAME"]],
-                "REACTION": [key],
-                "REACTION_SCHEMA": [module_res["REACTION"][key]],
+            row = pd.Series({
+                "ORGANISM": pathway_res["ORGANISM"],
+                "PATHWAY_NAME": pathway_res["NAME"][0],
+                "KO_PATHWAY": pathway_res["KO_PATHWAY"],
+                "MODULE": module,
+                "MODULE_NAME": module_res["NAME"][0],
+                "REACTION": key,
+                "REACTION_SCHEMA": module_res["REACTION"][key],
             })
             pathway_df = pd.concat(
-                [pathway_df, row_df],
+                [pathway_df, row.to_frame().T],
                 axis=0,
                 ignore_index=True
             )
