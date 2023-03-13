@@ -70,7 +70,7 @@ for pathway in s.pathwayIds:
     # There may be errors due to pathways lacking any modules
     # TODO: try extracting EC from ko_res["MODULE"]
     if "MODULE" not in pathway_res.keys():
-        logger.warning(f"No reactions found for {module}")
+        logger.warning(f"No modules found for {pathway}")
         continue
 
     # Retrieve info for all the modules in the KO pathway
