@@ -15,6 +15,7 @@ logging.basicConfig(
     filename=f"{FILE}-{ORGANISM}.log",
     filemode="w",
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
     level=logging.INFO
 )
 logger = logging.getLogger(FILE)
@@ -25,8 +26,8 @@ s = KEGG()
 s.organism = ORGANISM
 
 # KEGG retrieves all enzyme IDs although it filters pathway IDs by organism
-logger.info(f"Number of enzymes for organism {ORGANISM}: {len(s.enzymeIds)}")
-logger.info(f"Number of pathways for organism {ORGANISM}: {len(s.pathwayIds)}")
+logger.info(f"Number of enzymes: {len(s.enzymeIds)}")
+logger.info(f"Number of pathways: {len(s.pathwayIds)}")
 
 
 results_columns = [
@@ -66,14 +67,14 @@ for pathway in s.pathwayIds:
     # Retrieve info for all the modules in the KO pathway
     for module in ko_res["MODULE"].keys():
 
-        logger.info(f"Starting with module {pathway}-{module}")
+        logger.info(f"Processing module {module}")
 
         module_res = s.get(module)
         module_res = s.parse(module_res)
 
         # TODO: try extracting EC from module_res["ORTHOLOGY"]
         if "REACTION" not in module_res.keys():
-            logger.warning(f"No reactions found for module {pathway}-{module}")
+            logger.warning(f"No reactions found for module {module}")
             continue
 
         reaction_keys = module_res["REACTION"].keys()
