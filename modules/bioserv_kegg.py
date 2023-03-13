@@ -76,6 +76,8 @@ for pathway in s.pathwayIds:
     # Retrieve info for all the modules in the KO pathway
     for module in pathway_res["MODULE"].keys():
 
+        module = module.replace(f"{ORGANISM}_", "")
+
         logger.info(f"Processing module {module}")
 
         module_res = s.get(module)
