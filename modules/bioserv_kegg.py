@@ -35,8 +35,9 @@ results_columns = [
     "PATHWAY_NAME",
     "KO_PATHWAY",
     "MODULE",
+    "MODULE_NAME",
     "REACTION",
-    "REACTION SCHEMA"
+    "REACTION_SCHEMA"
 ]
 
 # Write empty CSV to later append to
