@@ -65,14 +65,10 @@ for pathway in s.pathwayIds:
     pathway_res = s.get(pathway)
     pathway_res = s.parse(pathway_res)
 
-    # Retrieve info for the given KO pathway
-    ko_res = s.get(pathway_res["KO_PATHWAY"])
-    ko_res = s.parse(ko_res)
-
     pathway_df = pd.DataFrame(columns=results_columns)
 
     # Retrieve info for all the modules in the KO pathway
-    for module in ko_res["MODULE"].keys():
+    for module in pathway_res["MODULE"].keys():
 
         logger.info(f"Processing module {module}")
 
