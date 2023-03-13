@@ -75,7 +75,7 @@ for pathway in s.pathwayIds:
 
         # TODO: try extracting EC from module_res["ORTHOLOGY"]
         if "REACTION" not in module_res.keys():
-            logger.warning(f"No reactions found for module {module}")
+            logger.warning(f"No reactions found for {module}")
             continue
 
         reaction_keys = module_res["REACTION"].keys()
