@@ -12,7 +12,7 @@ FILE = os.path.basename(__file__).replace(".py", "")
 
 # Configure logging
 logging.basicConfig(
-    filename=f"{FILE}-{ORGANISM}.log",
+    filename=f"{FILE}_{ORGANISM}.log",
     filemode="w",
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
@@ -41,7 +41,7 @@ results_columns = [
 ]
 
 # Write empty CSV to later append to
-results_filepath = f"{FILE}-{ORGANISM}.csv"
+results_filepath = f"{FILE}_{ORGANISM}.csv"
 pd.DataFrame(columns=results_columns).to_csv(
     results_filepath,
     header=True,
