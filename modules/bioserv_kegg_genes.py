@@ -43,7 +43,7 @@ results_columns = [
     "EC_NUMBER",
     "PATHWAY_ID",
     "PATHWAY_NAME",
-    "KO_PATHWAY"
+    "KO_PATHWAY",
     "ORGANISM"
 ]
 
