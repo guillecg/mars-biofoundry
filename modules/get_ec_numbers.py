@@ -33,9 +33,6 @@ logger.info(f"Number of enzymes: {len(s.enzymeIds)}")
 logger.info(f"Number of pathways: {len(s.pathwayIds)}")
 
 
-# TODO: check https://www.genome.jp/dbget-bin/get_linkdb?-t+genes+gn:T04747
-
-
 results_columns = [
     "GENE_ID",
     "GENE_NAME",
