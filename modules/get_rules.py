@@ -4,9 +4,10 @@ import csv
 import pandas as pd
 
 
-KEGG_DIR = "./"
+ORGANISM = "tez"
+DATA_DIR = "../data/"
 RETRORULES_DIR = "../../../papers/RetroRules/retrorules_rr01_rp2/"
-KEGG_FILEPATH = os.path.join(KEGG_DIR, "bioserv_kegg_genes_tez.csv")
+KEGG_FILEPATH = os.path.join(DATA_DIR, f"kegg_{ORGANISM}.csv")
 
 
 kegg_df = pd.read_csv(

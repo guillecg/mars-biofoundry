@@ -9,6 +9,7 @@ from bioservices.kegg import KEGG
 
 
 ORGANISM = "tez"
+DATA_DIR = "../data/"
 FILE = os.path.basename(__file__).replace(".py", "")
 
 
@@ -45,7 +46,7 @@ results_columns = [
 ]
 
 # Write empty CSV to later append to
-results_filepath = f"{FILE}_{ORGANISM}.csv"
+results_filepath = os.path.join(DATA_DIR, f"kegg_{ORGANISM}.csv")
 pd.DataFrame(columns=results_columns).to_csv(
     results_filepath,
     header=True,
