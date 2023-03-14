@@ -59,7 +59,7 @@ pd.DataFrame(columns=results_columns).to_csv(
 # information, modules for the given pathway in case they are available.
 # Modules are important because they contain reaction numbers. However, some 
 # pathways may lack any modules and, thus, the information regarding the 
-# reactions. Genes (EC numbers) information is not present either.
+# reactions. Information about genes can be retrieved directly from pathways.
 
 for pathway in s.pathwayIds:
 
