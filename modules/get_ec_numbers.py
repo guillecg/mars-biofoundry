@@ -71,8 +71,7 @@ for pathway in s.pathwayIds:
 
     pathway_df = pd.DataFrame(columns=results_columns)
 
-    # There may be errors due to pathways lacking any modules
-    # TODO: try extracting EC from ko_res["MODULE"]
+    # There may be pathways without any genes (generic/top-level pathways)
     if "GENE" not in pathway_res.keys():
         logger.warning(f"No genes found for {pathway}")
         continue
