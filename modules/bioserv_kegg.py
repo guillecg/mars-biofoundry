@@ -100,7 +100,7 @@ for pathway in s.pathwayIds:
                 "MODULE": module,
                 "MODULE_NAME": module_res["NAME"][0],
                 "REACTION": key,
-                "REACTION_SCHEMA": module_res["REACTION"][key],
+                "REACTION_SCHEMA": module_res["REACTION"][key]
             })
             pathway_df = pd.concat(
                 [pathway_df, row.to_frame().T],
