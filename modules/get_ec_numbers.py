@@ -15,7 +15,7 @@ FILE = os.path.basename(__file__).replace(".py", "")
 
 # Configure logging
 logging.basicConfig(
-    filename=f"{FILE}-{ORGANISM}.log",
+    filename=f"{FILE}_{ORGANISM}.log",
     filemode="w",
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
