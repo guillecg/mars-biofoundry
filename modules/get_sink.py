@@ -110,7 +110,7 @@ for reaction_id in reaction_id_list:
             logger.warning(
                 f"InChI for compound {compound_id} is malformed: {inchi}"
             )
-            continue
+            inchi = "None"
 
         # Concatenate results to final dataframe
         row = pd.Series({
