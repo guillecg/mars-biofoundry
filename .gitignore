@@ -131,3 +131,6 @@ dmypy.json
 # Data folders and files
 data/
 *.csv
+
+# VS Code folders
+.DS_Store
