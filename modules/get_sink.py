@@ -151,7 +151,7 @@ logger.info(f"Dropping duplicates: from {original_len} to {final_len} records")
 logger.info("Overwriting existing sink file...")
 compounds_df.to_csv(
     results_filepath,
-    header=False,
+    header=True,
     index=False,
     sep=",",
     mode="w",
