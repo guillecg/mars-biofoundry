@@ -9,7 +9,7 @@ from bioservices.kegg import KEGG
 
 
 ORGANISM = "tez"
-DATA_DIR = "../data/"
+DATA_DIR = "../data/retropath/"
 FILE = os.path.basename(__file__).replace(".py", "")
 
 
