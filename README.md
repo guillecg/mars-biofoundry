@@ -23,8 +23,11 @@ Metabolic engineering towards a biofoundry on Mars
 3. By getting EC from pathway: bioservices or https://www.kegg.jp/dbget-bin/www_bget?tez00450
 
 
-### Focusing on reaction numbers
 
-1. Use SPARQL to retrieve IDs for RR1 in MetaNetX: https://rdf.metanetx.org/
+## WARNING while working with KEGG!
 
-2. Convert to EC (see point 2. above)
+For some pathways, there are no reactions associated.
+For some pathways, there are no modules associated.
+For some modules, there are no reactions associated.
+For some reactions, there are no ECs associated.
+For some ECs, there may be no reactions associated.
