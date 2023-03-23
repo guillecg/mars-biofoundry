@@ -27,7 +27,11 @@ Metabolic engineering towards a biofoundry on Mars
 ## WARNING while working with KEGG!
 
 For some pathways, there are no reactions associated.
+
 For some pathways, there are no modules associated.
+
 For some modules, there are no reactions associated.
+
 For some reactions, there are no ECs associated.
+
 For some ECs, there may be no reactions associated.
