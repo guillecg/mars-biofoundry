@@ -6,7 +6,7 @@ import pandas as pd
 
 ORGANISM = "tez"
 DATA_DIR = "../data/retropath/"
-RETRORULES_DIR = "../../../papers/RetroRules/retrorules_rr01_rp2/"
+RETRORULES_DIR = "../data/retrorules/retrorules_rr01_rp2/"
 KEGG_FILEPATH = os.path.join(DATA_DIR, f"kegg_{ORGANISM}.csv")
 
 
