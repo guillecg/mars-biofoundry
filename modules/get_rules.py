@@ -16,7 +16,7 @@ kegg_df = pd.read_csv(
 )
 
 retrorules_df = pd.read_csv(
-    os.path.join(RETRORULES_DIR, "retrorules_rr01_rp2_flat_all.csv"),
+    os.path.join(RETRORULES_DIR, "retrorules_rr01_rp2_flat_forward.csv"),
     sep=","
 )
 
