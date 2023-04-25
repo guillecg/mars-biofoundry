@@ -39,6 +39,8 @@ conda install jupyter ipykernel -y
 python -m ipykernel install --user
 ```
 
+
+
 ## Second environment: community modeling with MICOM
 
 ### 0. Create the environment and activate it
@@ -65,4 +67,11 @@ export CXX=g++
 ### 2. Install MICOM
 ```{bash}
 pip install micom
+```
+
+### 4. For working interactively with Python
+
+```{bash}
+conda install jupyter ipykernel -y
+python -m ipykernel install --user
 ```
