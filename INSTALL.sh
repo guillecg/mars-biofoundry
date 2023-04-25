@@ -13,6 +13,9 @@ conda install numpy scipy pandas -y
 pip install --no-use-pep517 scikit-learn"==0.23.2"
 pip install modelseedpy
 
+# Install COBRApy
+pip install cobra
+
 # For interactively working with Python
 conda install jupyter ipykernel -y
 python -m ipykernel install --user
