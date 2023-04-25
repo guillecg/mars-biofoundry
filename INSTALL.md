@@ -38,3 +38,31 @@ pip install cobra
 conda install jupyter ipykernel -y
 python -m ipykernel install --user
 ```
+
+## Second environment: community modeling with MICOM
+
+### 0. Create the environment and activate it
+
+```{bash}
+conda create -n tfm-micom python=3.10 -y
+```
+
+### 1. Install dependencies
+
+NOTE: reinstall gcc if already installed.
+
+```{bash}
+brew install cmake gcc
+```
+
+NOTE: the error "Could not find compiler set in environment variable CC: arm64-apple-darwin20.0.0-clang" is solved by setting the following environment variables:
+
+```{bash}
+export CC=gcc
+export CXX=g++
+```
+
+### 2. Install MICOM
+```{bash}
+pip install micom
+```
