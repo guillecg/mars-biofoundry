@@ -34,7 +34,7 @@ model = MSBuilder.build_metabolic_model(
     annotate_with_rast=True
 )
 
-# Format for COBRAPy
+# Format for COBRApy
 model.compartments = {
     "c": "cytosol",
     "e": "extracellular space"
