@@ -26,13 +26,7 @@ pip install --no-use-pep517 scikit-learn"==0.23.2"
 pip install modelseedpy
 ```
 
-### 3. Install COBRApy
-
-```{bash}
-pip install cobra
-```
-
-### 4. For working interactively with Python
+### 3. For working interactively with Python
 
 ```{bash}
 conda install jupyter ipykernel -y
