@@ -26,7 +26,12 @@ pip install --no-use-pep517 scikit-learn"==0.23.2"
 pip install modelseedpy
 ```
 
-### 3. For working interactively with Python
+### 3. Install other dependencies
+```{bash}
+pip install bioservices
+```
+
+### 4. For working interactively with Python
 
 ```{bash}
 conda install jupyter ipykernel -y
