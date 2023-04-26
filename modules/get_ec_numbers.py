@@ -2,6 +2,8 @@ import os
 import re
 import logging
 
+import time
+
 import csv
 import pandas as pd
 
@@ -133,3 +135,6 @@ for pathway in s.pathwayIds:
         quotechar='"',
         quoting=csv.QUOTE_MINIMAL # Avoid errors with commas in names
     )
+
+    # Wait between calls
+    time.sleep(0.5)
