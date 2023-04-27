@@ -45,6 +45,13 @@ DATA_DIR = "../data/modelseedpy/"
 
 
 SPECIES_DICT = {
+    "aci": "Acidovorax BoFeN1",
+    "bme": "Brevundimonas sp. T2.26MG-97",
+    "dmi": "Desulfosporosinus meridiei DSM 13257",
+    "pse": "Pseudomonas sp. T2.31D-1",
+    "rhi": "Rhizobium sp. T2.30D1.1",
+    "rho": "Rhodoplanes sp. T2.26MG-98",
+    "shw": "Shewanella sp. T2.3D-1.1",
     "tez": "Tessaracoccus sp. T2.5-30"
 }
 
