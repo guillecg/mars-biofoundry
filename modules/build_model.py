@@ -48,8 +48,7 @@ for organism, filename in GENOMES_DICT.items():
 
     # Save model
     model_path = os.path.join(
-        DATA_DIR,
-        organism,
+        "../data/modelseedpy/",
         f"{organism}.json"
     )
     save_json_model(
