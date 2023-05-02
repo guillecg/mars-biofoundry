@@ -1,31 +1,67 @@
-import os
+from typing import List
 
+import os
 import json
+import string
+from functools import reduce
 
 import pandas as pd
 
 from micom import Community
+from micom.workflows import build, grow
 
 
-def fix_compartments(model_path: str) -> str:
+def rename_compartments(model_text: str) -> str:
+    return model_text\
+        .replace("_c0", "_c")\
+        .replace("_e0", "_e")\
+        .replace('"c0"', '"c"')\
+        .replace('"e0"', '"e"')\
+        .replace("\n", "")\
+        .replace(
+            '"c":""', '"c":"cytosol"'
+        )\
+        .replace(
+            '"e":""', '"e":"extracellular"'
+        )
+
+
+def rename_metabolites(
+    model_text: str,
+    modelseed_cpd_path: str = "../data/modelseed/compounds.tsv"
+) -> str:
+
+    modelseed_cpd = pd.read_table(modelseed_cpd_path)
+
+    # Avoid errors in COBRApy due to punctuation and whitespaces in names
+    modelseed_cpd["abbreviation"] = modelseed_cpd["abbreviation"]\
+        .str.replace(
+            pat=r"[{}|\s]".format(string.punctuation),
+            repl="-",
+            regex=True
+        )
+
+    # Create new column to avoid abbreviation duplicates
+    modelseed_cpd["abbreviation_id"] = \
+        modelseed_cpd["id"] + "=" + modelseed_cpd["abbreviation"]
+
+    return reduce(
+        lambda a, kv: \
+            a.replace(*kv),
+            modelseed_cpd[["id", "abbreviation_id"]].to_numpy(dtype=str),
+            model_text
+    )
+
+
+def format_model(model_path: str) -> str:
 
     model_path_new = model_path\
-        .replace(".json", "_corrected.json")
+        .replace(".json", "_formatted.json")
 
     with open(model_path, "r") as fh:
         model_text = fh.read()
-        model_text = model_text\
-            .replace("_c0", "_c")\
-            .replace("_e0", "_e")\
-            .replace('"c0"', '"c"')\
-            .replace('"e0"', '"e"')\
-            .replace("\n", "")\
-            .replace(
-                '"c":""', '"c":"cytosol"'
-            )\
-            .replace(
-                '"e":""', '"e":"extracellular"'
-            )
+        model_text = rename_compartments(model_text)
+        model_text = rename_metabolites(model_text)
 
     with open(model_path_new, "w") as fh:
         json.dump(
@@ -39,10 +75,10 @@ def fix_compartments(model_path: str) -> str:
 
 
 DATA_DIR = "../data/modelseedpy/"
+MODEL_DIR = "../data/micom/rio_tinto/amils_2023/"
 
 # WARNING: Not working for more than one thread, caution is advised!
-# N_THREADS = 1
-
+N_THREADS = 1
 
 SPECIES_DICT = {
     "aci": "Acidovorax BoFeN1",
@@ -55,6 +91,7 @@ SPECIES_DICT = {
     "tez": "Tessaracoccus sp. T2.5-30"
 }
 
+
 taxonomy = []
 
 for organism, species in SPECIES_DICT.items():
@@ -64,7 +101,7 @@ for organism, species in SPECIES_DICT.items():
     model_path = os.path.join(
         DATA_DIR, f"{organism}.json"
     )
-    model_path_new = fix_compartments(model_path)
+    model_path_new = format_model(model_path)
 
     taxonomy += [
         {
@@ -73,6 +110,7 @@ for organism, species in SPECIES_DICT.items():
             "species": species,
             "reactions": None,
             "metabolites": None,
+            "sample_id": "amils_2023",
             "file": model_path_new
         }
     ]
@@ -80,3 +118,4 @@ for organism, species in SPECIES_DICT.items():
 taxonomy = pd.DataFrame.from_records(taxonomy)
 
 com = Community(taxonomy)
+sol = com.cooperative_tradeoff()
