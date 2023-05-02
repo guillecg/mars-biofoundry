@@ -117,5 +117,20 @@ for organism, species in SPECIES_DICT.items():
 
 taxonomy = pd.DataFrame.from_records(taxonomy)
 
-com = Community(taxonomy)
-sol = com.cooperative_tradeoff()
+# com = Community(taxonomy)
+# sol = com.cooperative_tradeoff()
+
+manifest = build(
+    taxonomy=taxonomy,
+    out_folder=MODEL_DIR,
+    model_db=None,
+    cutoff=1e-2,
+    threads=N_THREADS
+)
+
+manifest = pd.read_csv(
+    os.path.join(
+        MODEL_DIR,
+        "manifest.csv"
+    )
+)
