@@ -46,7 +46,7 @@ def rename_metabolites(
 
     # Create new column to avoid abbreviation duplicates
     modelseed_cpd["abbreviation_id"] = \
-        modelseed_cpd["id"] + "=" + modelseed_cpd["abbreviation"]
+        modelseed_cpd["id"].str + "=" + modelseed_cpd["abbreviation"]
 
     return reduce(
         lambda a, kv: \
@@ -92,7 +92,7 @@ metadata_df = metadata_df.dropna(axis=0)
 taxonomy = []
 
 for _, row in metadata_df.iterrows():
-    species, organism = row[["Species", "Code"]]
+    species, organism = row[["Species", "Code"]].values
 
     # NOTE: ModelSEEDpy creates compartments with numbers (e.g. "c0" instead
     # of "c") which cannot be recognized by COBRApy (used by MICOM).
@@ -169,11 +169,12 @@ abundances_illumina_df = abundances_illumina_df\
     .rename(columns={
         "BH10": "abundance",
         "Genus": "genus",
-        "Sample": "sample"
+        "Sample": "sample_id"
     })
 
-abundances_illumina_df["sample"] = abundances_illumina_df["sample"]\
-    .apply(lambda row: f"BH10-{row}-Illumina")
+abundances_illumina_df["sample_id"] = abundances_illumina_df["sample_id"]\
+    .apply(lambda row: f"BH10-{str(row)}-Illumina")\
+    .astype(str)
 
 # Get samples in long format for Roche reads
 abundances_roche_df = pd.wide_to_long(
@@ -190,11 +191,12 @@ abundances_roche_df = abundances_roche_df\
     .rename(columns={
         "BH10": "abundance",
         "Genus": "genus",
-        "Sample": "sample"
+        "Sample": "sample_id"
     })
 
-abundances_roche_df["sample"] = abundances_roche_df["sample"]\
-    .apply(lambda row: f"BH10-{row}-Roche")
+abundances_roche_df["sample_id"] = abundances_roche_df["sample_id"]\
+    .apply(lambda row: f"BH10-{str(row)}-Roche")\
+    .astype(str)
 
 # Concatenate
 abundances_df = pd.concat(
@@ -209,8 +211,6 @@ taxonomy_abundances = pd.merge(
     on="genus",
     how="left"
 )
-
-taxonomy_abundances = taxonomy_abundances.dropna()
 
 # ---------------------------------------------------------------------------- #
 # Communities
