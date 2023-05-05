@@ -31,7 +31,10 @@ def rename_metabolites(
     modelseed_cpd_path: str = "../data/modelseed/compounds.tsv"
 ) -> str:
 
-    modelseed_cpd = pd.read_table(modelseed_cpd_path)
+    modelseed_cpd = pd.read_table(
+        modelseed_cpd_path,
+        dtype=object # Avoid warnings
+    )
 
     # Avoid errors in COBRApy due to punctuation and whitespaces in names
     modelseed_cpd["abbreviation"] = modelseed_cpd["abbreviation"]\
