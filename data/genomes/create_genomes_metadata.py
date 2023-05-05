@@ -16,8 +16,8 @@ metadata_df = pd.DataFrame.from_records([
         "Code": "tez",
         "Database": "IMG",
         "ID": "2751185744",
-        "Record": "https://www.ncbi.nlm.nih.gov/nuccore/CP003629.1",
-        "Download": "https://www.ncbi.nlm.nih.gov/nuccore/CP003629.1",
+        "Record": "https://www.ncbi.nlm.nih.gov/nuccore/CP019229.1",
+        "Download": "https://www.ncbi.nlm.nih.gov/nuccore/CP019229.1",
         "Protein annotation file": "CP019229.1.faa"
     },
     {
