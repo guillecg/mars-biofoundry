@@ -108,12 +108,105 @@ for _, row in metadata_df.iterrows():
             "species": species,
             "reactions": None,
             "metabolites": None,
-            "sample_id": "amils_2023",
             "file": model_path_new
         }
     ]
 
 taxonomy = pd.DataFrame.from_records(taxonomy)
+
+# ---------------------------------------------------------------------------- #
+# Abundances
+
+# Read 454 and Illumina abundances from supplementary materials
+PAPER_DIR = "../data/amils2023/"
+
+abundances_illumina_df = pd.read_excel(
+    os.path.join(
+        PAPER_DIR,
+        "emi16291-sup-0005-datasets4.xlsx"
+    ),
+    sheet_name="Filtered OTUs",
+    skiprows=11
+)
+abundances_roche_df = pd.read_excel(
+    os.path.join(
+        PAPER_DIR,
+        "emi16291-sup-0006-datasets5.xlsx"
+    ),
+    sheet_name="DW Filtered OTUs",
+    skiprows=11
+)
+
+# Filter out species also present in the drilling water (possible contamination)
+# abundances_illumina_df = abundances_illumina_df[
+#     (abundances_illumina_df["DW_RG"] == 0) & \
+#     (abundances_illumina_df["IC"] == 0)
+# ]
+# abundances_roche_df = abundances_roche_df[
+#     abundances_roche_df["DWδ"] == 0
+# ]
+
+# Group samples by genus to avoid repeats
+abundances_illumina_df = abundances_illumina_df\
+    .groupby("Genus", as_index=False)\
+    .sum()
+abundances_roche_df = abundances_roche_df\
+    .groupby("Genus", as_index=False)\
+    .sum()
+
+# Get samples in long format for Illumina reads
+abundances_illumina_df = pd.wide_to_long(
+    df=abundances_illumina_df,
+    stubnames="BH10",
+    i="Genus",
+    j="Sample",
+    sep="-",
+    suffix="\\d+"
+)
+abundances_illumina_df = abundances_illumina_df\
+    .reset_index()\
+    [["Genus", "Sample", "BH10"]]\
+    .rename(columns={
+        "BH10": "abundance",
+        "Genus": "genus"
+    })
+
+abundances_illumina_df["Sample"] = abundances_illumina_df["Sample"]\
+    .apply(lambda row: f"BH10-{row}-Illumina")
+
+# Get samples in long format for Roche reads
+abundances_roche_df = pd.wide_to_long(
+    df=abundances_roche_df,
+    stubnames="BH10",
+    i="Genus",
+    j="Sample",
+    sep="-",
+    suffix="\\d+"
+)
+abundances_roche_df = abundances_roche_df\
+    .reset_index()\
+    [["Genus", "Sample", "BH10"]]\
+    .rename(columns={
+        "BH10": "abundance",
+        "Genus": "genus"
+    })
+
+abundances_roche_df["Sample"] = abundances_roche_df["Sample"]\
+    .apply(lambda row: f"BH10-{row}-Roche")
+
+# Concatenate
+abundances_df = pd.concat(
+    [abundances_illumina_df, abundances_roche_df],
+    axis=0,
+    ignore_index=True
+)
+
+merged_df = pd.merge(
+    left=taxonomy,
+    right=abundances_df,
+    on="genus",
+    how="inner"
+)
 
 # ---------------------------------------------------------------------------- #
 # Communities
