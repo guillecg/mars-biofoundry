@@ -1,6 +1,8 @@
 import os
 import time
 
+import pandas as pd
+
 from modelseedpy import MSBuilder, MSGenome
 
 from cobra.io import load_json_model, save_json_model
@@ -14,22 +16,24 @@ from cobra.io import load_json_model, save_json_model
 # For example, for tez: https://www.ncbi.nlm.nih.gov/nuccore/CP019229.1
 
 DATA_DIR = "../data/genomes/"
-GENOMES_DICT = {
-    "aci": "QOZT01.1.fsa_aa",
-    "bme": "UXHF01P.1.fsa_aa",
-    "dmi": "CP003629.1.faa",
-    "pse": "CAJFAG01.1.fsa_aa",
-    "rhi": "UEYP01.1.fsa_aa",
-    "rho": "UWOC01.1.fsa_aa",
-    "shw": "CACVBT03.1.fsa_aa",
-    "tez": "CP019229.1.faa"
-}
 
-for organism, filename in GENOMES_DICT.items():
+metadata_df = pd.read_csv(
+    os.path.join(
+        DATA_DIR,
+        "genomes-metadata.csv"
+    )
+)
+
+# Drop rercords with missing data
+metadata_df = metadata_df.dropna(axis=0)
+
+for _, row in metadata_df.iterrows():
+    organism = row["Code"]
+
     genome_path = os.path.join(
         DATA_DIR,
-        organism,
-        filename
+        row["Code"],
+        row["Protein annotation file"]
     )
     genome = MSGenome.from_fasta(
         genome_path,
