@@ -8,7 +8,7 @@ from functools import reduce
 import pandas as pd
 
 from micom import Community
-from micom.workflows import build, grow
+from micom.workflows import build
 
 
 def rename_compartments(model_text: str) -> str:
@@ -74,32 +74,27 @@ def format_model(model_path: str) -> str:
     return model_path_new
 
 
-DATA_DIR = "../data/modelseedpy/"
+MODELS_DIR = "../data/modelseedpy/"
 MODEL_DIR = "../data/micom/rio_tinto/amils_2023/"
 
 # WARNING: Not working for more than one thread, caution is advised!
 N_THREADS = 1
 
-SPECIES_DICT = {
-    "aci": "Acidovorax BoFeN1",
-    "bme": "Brevundimonas sp. T2.26MG-97",
-    "dmi": "Desulfosporosinus meridiei DSM 13257",
-    "pse": "Pseudomonas sp. T2.31D-1",
-    "rhi": "Rhizobium sp. T2.30D1.1",
-    "rho": "Rhodoplanes sp. T2.26MG-98",
-    "shw": "Shewanella sp. T2.3D-1.1",
-    "tez": "Tessaracoccus sp. T2.5-30"
-}
 
+metadata_df = pd.read_csv("../data/genomes/genomes-metadata.csv")
+
+# Drop rercords with missing data
+metadata_df = metadata_df.dropna(axis=0)
 
 taxonomy = []
 
-for organism, species in SPECIES_DICT.items():
+for _, row in metadata_df.iterrows():
+    species, organism = row[["Species", "Code"]]
 
     # NOTE: ModelSEEDpy creates compartments with numbers (e.g. "c0" instead
     # of "c") which cannot be recognized by COBRApy (used by MICOM).
     model_path = os.path.join(
-        DATA_DIR, f"{organism}.json"
+        MODELS_DIR, f"{organism}.json"
     )
     model_path_new = format_model(model_path)
 
@@ -117,8 +112,14 @@ for organism, species in SPECIES_DICT.items():
 
 taxonomy = pd.DataFrame.from_records(taxonomy)
 
+# ---------------------------------------------------------------------------- #
+# Communities
+
 # com = Community(taxonomy)
 # sol = com.cooperative_tradeoff()
+
+# ---------------------------------------------------------------------------- #
+# Manifest
 
 manifest = build(
     taxonomy=taxonomy,
