@@ -78,7 +78,7 @@ def format_model(model_path: str) -> str:
 
 
 MODELS_DIR = "../data/modelseedpy/"
-MODEL_DIR = "../data/micom/rio_tinto/amils_2023/"
+OUT_DIR = "../data/micom/rio_tinto/amils_2023/"
 
 # WARNING: Not working for more than one thread, caution is advised!
 N_THREADS = 1
@@ -118,15 +118,15 @@ taxonomy = pd.DataFrame.from_records(taxonomy)
 # ---------------------------------------------------------------------------- #
 # Communities
 
-# com = Community(taxonomy)
-# sol = com.cooperative_tradeoff()
+com = Community(taxonomy)
+sol = com.cooperative_tradeoff()
 
 # ---------------------------------------------------------------------------- #
 # Manifest
 
 manifest = build(
     taxonomy=taxonomy,
-    out_folder=MODEL_DIR,
+    out_folder=OUT_DIR,
     model_db=None,
     cutoff=1e-2,
     threads=N_THREADS
@@ -134,7 +134,7 @@ manifest = build(
 
 manifest = pd.read_csv(
     os.path.join(
-        MODEL_DIR,
+        OUT_DIR,
         "manifest.csv"
     )
 )
