@@ -10,4 +10,5 @@
 * Rhizobium sp. T2.30D1.1 (rhi) - [GenBank](https://www.ncbi.nlm.nih.gov/nuccore/UEYP00000000), [file UEYP01.1.fsa_aa.gz](https://www.ncbi.nlm.nih.gov/Traces/wgs/UEYP01)
 * Rhodoplanes sp. T2.26MG-98 (rho) - [GenBank](https://www.ncbi.nlm.nih.gov/nuccore/UWOC00000000), [file UWOC01.1.fsa_aa.gz](https://www.ncbi.nlm.nih.gov/Traces/wgs/UWOC01)
 * Shewanella sp. T2.3D-1.1 (shw) - [GenBank](https://www.ncbi.nlm.nih.gov/nuccore/CACVBT000000000.3/), [file CACVBT03.1.fsa_aa.gz](https://www.ncbi.nlm.nih.gov/Traces/wgs/CACVBT03)
+* Tessaracoccus lapidicaptus IPBSL-7 (tel) - [GenBank](https://www.ncbi.nlm.nih.gov/nuccore/MBQD00000000.1/), [file MBQD01P.1.fsa_aa.gz](https://www.ncbi.nlm.nih.gov/Traces/wgs/MBQD01)
 * Tessaracoccus sp. T2.5-30 (tez) - [GenBank](https://www.ncbi.nlm.nih.gov/nuccore/CP019229.1)
