@@ -168,10 +168,11 @@ abundances_illumina_df = abundances_illumina_df\
     [["Genus", "Sample", "BH10"]]\
     .rename(columns={
         "BH10": "abundance",
-        "Genus": "genus"
+        "Genus": "genus",
+        "Sample": "sample"
     })
 
-abundances_illumina_df["Sample"] = abundances_illumina_df["Sample"]\
+abundances_illumina_df["sample"] = abundances_illumina_df["sample"]\
     .apply(lambda row: f"BH10-{row}-Illumina")
 
 # Get samples in long format for Roche reads
@@ -188,10 +189,11 @@ abundances_roche_df = abundances_roche_df\
     [["Genus", "Sample", "BH10"]]\
     .rename(columns={
         "BH10": "abundance",
-        "Genus": "genus"
+        "Genus": "genus",
+        "Sample": "sample"
     })
 
-abundances_roche_df["Sample"] = abundances_roche_df["Sample"]\
+abundances_roche_df["sample"] = abundances_roche_df["sample"]\
     .apply(lambda row: f"BH10-{row}-Roche")
 
 # Concatenate
@@ -201,17 +203,19 @@ abundances_df = pd.concat(
     ignore_index=True
 )
 
-merged_df = pd.merge(
+taxonomy_abundances = pd.merge(
     left=taxonomy,
     right=abundances_df,
     on="genus",
-    how="inner"
+    how="left"
 )
+
+taxonomy_abundances = taxonomy_abundances.dropna()
 
 # ---------------------------------------------------------------------------- #
 # Communities
 
-com = Community(taxonomy)
+com = Community(taxonomy_abundances)
 sol = com.cooperative_tradeoff()
 
 # ---------------------------------------------------------------------------- #
