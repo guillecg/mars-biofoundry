@@ -68,6 +68,11 @@ export CXX=g++
 pip install micom
 ```
 
+### 3. Install other dependencies
+```{bash}
+conda install openpyxl
+```
+
 ### 4. For working interactively with Python
 
 ```{bash}
