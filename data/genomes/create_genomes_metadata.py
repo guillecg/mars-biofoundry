@@ -105,7 +105,7 @@ metadata_df = pd.DataFrame.from_records([
 
 
 metadata_df.to_csv(
-    "genome-metadata.csv",
+    "genomes-metadata.csv",
     index=False,
     header=True,
     sep=",",
