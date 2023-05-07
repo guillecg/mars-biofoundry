@@ -46,7 +46,7 @@ def rename_metabolites(
 
     # Create new column to avoid abbreviation duplicates
     modelseed_cpd["abbreviation_id"] = \
-        modelseed_cpd["id"].str + "=" + modelseed_cpd["abbreviation"]
+        modelseed_cpd["id"] + "=" + modelseed_cpd["abbreviation"]
 
     return reduce(
         lambda a, kv: \
@@ -195,8 +195,7 @@ abundances_roche_df = abundances_roche_df\
     })
 
 abundances_roche_df["sample_id"] = abundances_roche_df["sample_id"]\
-    .apply(lambda row: f"BH10-{str(row)}-Roche")\
-    .astype(str)
+    .apply(lambda row: f"BH10-{str(row)}-Roche")
 
 # Concatenate
 abundances_df = pd.concat(
@@ -205,12 +204,17 @@ abundances_df = pd.concat(
     ignore_index=True
 )
 
+# TODO: divide counts for Tessaracoccus and Rhizobium!!!
 taxonomy_abundances = pd.merge(
     left=taxonomy,
     right=abundances_df,
     on="genus",
     how="left"
 )
+
+# Combine ID column with sample ID to avoid errors in MICOM due to ID duplicates
+taxonomy_abundances["id"] = \
+    taxonomy_abundances["id"] + "_" + taxonomy_abundances["sample_id"]
 
 # ---------------------------------------------------------------------------- #
 # Communities
