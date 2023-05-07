@@ -1,140 +1,70 @@
 import os
-import re
-import logging
 
-import time
+import json
 
 import csv
 import pandas as pd
 
-from bioservices.kegg import KEGG
+
+# Read model
+model_path = "../data/modelseedpy/aci_formatted.json"
 
 
-ORGANISM = "tez"
-DATA_DIR = "../data/retropath/"
-FILE = os.path.basename(__file__).replace(".py", "")
+def get_ec_from_model(model_path: str) -> pd.DataFrame:
+
+    with open(model_path, mode="r") as fh:
+        model_dict = json.loads(fh.read())
+
+    # Get reaction IDs
+    reaction_ids = [item["id"].split("_")[0] for item in model_dict["reactions"]]
+
+    # Get EC numbers from reactions in ModelSEEDDatabase
+    modelseed_df = pd.read_table("../data/modelseed/reactions.tsv")
+
+    ec_numbers = modelseed_df[modelseed_df["id"].isin(reaction_ids)]["ec_numbers"]
+
+    # Explode series since there may be multiple EC numbers per reaction
+    ec_numbers = ec_numbers.str.split("|").explode()
+
+    # Convert to frame
+    ec_numbers = ec_numbers.to_frame()
+
+    # Add model ID
+    ec_numbers["ID"] = model_dict["id"]
+
+    # TODO: log statistics
+
+    return ec_numbers
 
 
-# Configure logging
-logging.basicConfig(
-    filename=f"{FILE}_{ORGANISM}.log",
-    filemode="w",
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    level=logging.INFO
-)
-logger = logging.getLogger(FILE)
-logger.info(f"Starting with organism {ORGANISM}")
+MODELS_DIR = "../data/modelseedpy/"
 
 
-s = KEGG()
-s.organism = ORGANISM
+metadata_df = pd.read_csv("../data/genomes/genomes-metadata.csv")
 
-# KEGG retrieves all enzyme and modules IDs although it filters pathway IDs by
-# organism
-logger.info(f"Number of enzymes: {len(s.enzymeIds)}")
-logger.info(f"Number of pathways: {len(s.pathwayIds)}")
+# Drop rercords with missing data
+metadata_df = metadata_df.dropna(axis=0)
 
+results_df = pd.DataFrame()
 
-results_columns = [
-    "GENE_ID",
-    "GENE_NAME",
-    "KO_NUMBER",
-    "EC_NUMBER",
-    "PATHWAY_ID",
-    "PATHWAY_NAME",
-    "KO_PATHWAY",
-    "ORGANISM"
-]
+for organism in metadata_df["Code"]:
 
-# Write empty CSV to later append to
-results_filepath = os.path.join(DATA_DIR, f"kegg_{ORGANISM}.csv")
-pd.DataFrame(columns=results_columns).to_csv(
-    results_filepath,
+    model_path = os.path.join(
+        MODELS_DIR, f"{organism}.json"
+    )
+
+    results_df = pd.concat(
+        [results_df, get_ec_from_model(model_path)],
+        axis=0,
+        ignore_index=True
+    )
+
+results_df.to_csv(
+    "../data/retropath/ec_numbers_all.csv",
     header=True,
     index=False,
     sep=",",
-    mode="w"
+    mode="w",
+    quotechar='"',
+    quoting=csv.QUOTE_MINIMAL # Avoid errors with commas in names
 )
-
-# NOTE: In order to retrieve information from RetroRules, we need either the
-# reaction numbers or the ECs. The bioservices package retrieves, among other
-# information, modules for the given pathway in case they are available.
-# Modules are important because they contain reaction numbers. However, some 
-# pathways may lack any modules and, thus, the information regarding the 
-# reactions. Information about genes can be retrieved directly from pathways.
-
-for pathway in s.pathwayIds:
-
-    logger.info(f"Starting with pathway {pathway}")
-
-    # Retrieve info for the given pathway
-    pathway_res = s.get(pathway)
-    pathway_res = s.parse(pathway_res)
-
-    pathway_df = pd.DataFrame(columns=results_columns)
-
-    # There may be pathways without any genes (generic/top-level pathways)
-    if "GENE" not in pathway_res.keys():
-        logger.warning(f"No genes found for {pathway}")
-        continue
-
-    # Retrieve info for all the modules in the KO pathway
-    for gene_id, gene_desc in pathway_res["GENE"].items():
-
-        logger.info(f"Processing gene {gene_id}")
-
-        # TODO: get information for each gene
-        # gene_res = s.get(f"{ORGANISM}:{gene_id}")
-        # gene_res = s.parse(gene_res)
-
-        gene_desc = gene_desc.split(" [")
-        gene_desc = [x.replace("]", "") for x in gene_desc]
-
-        # Get KO and EC numbers by regex
-        gene_ko = list(
-            filter(lambda x: re.match(pattern="KO\:", string=x), gene_desc)
-        )
-        gene_ec = list(
-            filter(lambda x: re.match(pattern="EC\:", string=x), gene_desc)
-        )
-
-        # Remove prefix
-        gene_ko = [x.replace("KO:", "") for x in gene_ko]
-        gene_ec = [x.replace("EC:", "") for x in gene_ec]
-
-        # Join multiple numbers
-        gene_ko = ";".join(gene_ko).replace(" ", ";")
-        gene_ec = ";".join(gene_ec).replace(" ", ";")
-
-        # Concatenate results to final dataframe
-        row = pd.Series({
-            "GENE_ID": gene_id,
-            "GENE_NAME": gene_desc[0],
-            "KO_NUMBER": gene_ko,
-            "EC_NUMBER": gene_ec,
-            "PATHWAY_ID": pathway,
-            "PATHWAY_NAME": pathway_res["NAME"][0],
-            "KO_PATHWAY": pathway_res["KO_PATHWAY"],
-            "ORGANISM": pathway_res["ORGANISM"]
-        })
-        pathway_df = pd.concat(
-            [pathway_df, row.to_frame().T],
-            axis=0,
-            ignore_index=True
-        )
-
-    logger.info(f"Writing pathway {pathway} to file")
-
-    pathway_df.to_csv(
-        results_filepath,
-        header=False,
-        index=False,
-        sep=",",
-        mode="a",
-        quotechar='"',
-        quoting=csv.QUOTE_MINIMAL # Avoid errors with commas in names
-    )
-
-    # Wait between calls
-    time.sleep(0.5)

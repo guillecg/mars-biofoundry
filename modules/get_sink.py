@@ -8,9 +8,8 @@ import csv
 import pandas as pd
 
 
-ORGANISM = "tez"
 DATA_DIR = "../data/retropath/"
-KEGG_FILEPATH = os.path.join(DATA_DIR, f"kegg_{ORGANISM}_rules.csv")
+EC_NUM_FILEPATH = os.path.join(DATA_DIR, f"ec_numbers_all_rules.csv")
 
 
 # Read MetaNetX reac_prop.tsv file
@@ -46,9 +45,9 @@ metanetx_chem_prop = pd.read_table(
     ]
 )
 
-# Load rules extracted by mapping KEGG's ECs to RetroRules DB (get_rules.py)
+# Load rules extracted by mapping ECs to RetroRules DB (get_rules.py)
 rules_df = pd.read_csv(
-    KEGG_FILEPATH,
+    EC_NUM_FILEPATH,
     sep=","
 )
 
@@ -128,7 +127,7 @@ print(
 compounds_df = compounds_df.fillna("None")
 
 # Write to file
-results_filepath = os.path.join(DATA_DIR, f"kegg_{ORGANISM}_sink.csv")
+results_filepath = EC_NUM_FILEPATH.replace("_rules.csv", "_sink.csv")
 compounds_df.to_csv(
     results_filepath,
     header=True,

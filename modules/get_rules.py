@@ -4,14 +4,13 @@ import csv
 import pandas as pd
 
 
-ORGANISM = "tez"
 DATA_DIR = "../data/retropath/"
 RETRORULES_DIR = "../data/retrorules/retrorules_rr01_rp2/"
-KEGG_FILEPATH = os.path.join(DATA_DIR, f"kegg_{ORGANISM}.csv")
+EC_NUM_FILEPATH = os.path.join(DATA_DIR, "ec_numbers_all.csv")
 
 
-kegg_df = pd.read_csv(
-    KEGG_FILEPATH,
+ec_num_df = pd.read_csv(
+    EC_NUM_FILEPATH,
     sep=","
 )
 
@@ -20,23 +19,18 @@ retrorules_df = pd.read_csv(
     sep=","
 )
 
-# Explode multiple EC numbers per row
-kegg_df["EC_NUMBER"] = kegg_df["EC_NUMBER"].str.split(";")
-kegg_df = kegg_df.explode("EC_NUMBER").reset_index(drop=True)
+# Drop potential duplicates (more than one species with the same EC)
+ec_numbers = ec_num_df["ec_numbers"].unique()
 
 retrorules_df["EC number"] = retrorules_df["EC number"].str.split(";")
 retrorules_df = retrorules_df.explode("EC number").reset_index(drop=True)
 
-merged_df = pd.merge(
-    left=kegg_df,
-    right=retrorules_df,
-    left_on="EC_NUMBER",
-    right_on="EC number",
-    how="inner"
-)
+merged_df = retrorules_df[
+    retrorules_df["EC number"].isin(ec_numbers)
+]
 
 merged_df.to_csv(
-    KEGG_FILEPATH.replace(".csv", "_rules.csv"),
+    EC_NUM_FILEPATH.replace(".csv", "_rules.csv"),
     header=True,
     index=False,
     sep=",",
