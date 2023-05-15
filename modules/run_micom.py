@@ -56,16 +56,28 @@ def rename_metabolites(
     )
 
 
+def get_counts(
+    model: dict,
+    element: str
+):
+    if type not in ("metabolites", "reactions"):
+        raise NotImplementedError
+
+    return len(model[element])
+
+
 def format_model(model_path: str) -> str:
 
     model_path_new = model_path\
         .replace(".json", "_formatted.json")
 
+    # Load model as text and rename compartments and metabolites
     with open(model_path, "r") as fh:
         model_text = fh.read()
         model_text = rename_compartments(model_text)
         model_text = rename_metabolites(model_text)
 
+    # Dump formatted model
     with open(model_path_new, "w") as fh:
         json.dump(
             obj=json.loads(model_text),
@@ -74,7 +86,16 @@ def format_model(model_path: str) -> str:
             sort_keys=False
         )
 
-    return model_path_new
+    # Load model as dictionary and count reactions and metabolites
+    # NOTE: do this after formatting to check for any errors in the process
+    with open(model_path_new, "r") as fh:
+        # See https://stackoverflow.com/questions/64268575/how-can-i-import-a-json-as-a-dict#comment113647180_64268609
+        model_dict, _ = json.load(fh)
+
+        n_reactions = get_counts(model=model_dict, element="reactions")
+        n_metabolites = get_counts(model=model_dict, element="metabolites")
+
+    return model_path_new, n_reactions, n_metabolites
 
 
 MODELS_DIR = "../data/modelseedpy/"
@@ -99,15 +120,15 @@ for _, row in metadata_df.iterrows():
     model_path = os.path.join(
         MODELS_DIR, f"{organism}.json"
     )
-    model_path_new = format_model(model_path)
+    model_path_new, n_reactions, n_metabolites = format_model(model_path)
 
     taxonomy += [
         {
             "id": organism,
             "genus": species.split(" ")[0],
             "species": species,
-            "reactions": None,
-            "metabolites": None,
+            "reactions": n_reactions,
+            "metabolites": n_metabolites,
             "file": model_path_new
         }
     ]
