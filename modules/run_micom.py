@@ -237,10 +237,32 @@ taxonomy_abundances = pd.merge(
 taxonomy_abundances["id"] = \
     taxonomy_abundances["id"] + "_" + taxonomy_abundances["sample_id"]
 
+# Save to file
+taxonomy_abundances.to_csv(
+    os.path.join(
+        OUT_DIR,
+        "taxonomy.csv"
+    ),
+    header=True,
+    index=False,
+    sep=","
+)
+
 # ---------------------------------------------------------------------------- #
 # Communities
 
+# Build community
 com = Community(taxonomy_abundances)
+
+# Save community
+com.to_pickle(
+    os.path.join(
+        OUT_DIR,
+        "community.pickle"
+    )
+)
+
+# Get tradeoffs
 sol = com.cooperative_tradeoff()
 
 # ---------------------------------------------------------------------------- #
