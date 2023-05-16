@@ -108,6 +108,10 @@ compounds_df = pd.read_excel(
     skiprows=1
 )
 
+# Drop W90 sample to avoid duplicates
+compounds_df = compounds_df[compounds_df["SAMPLE"] != "BH10_W90"]\
+    .reset_index(drop=True)
+
 # Create depth column
 compounds_df["Depth"] = compounds_df["SAMPLE"]\
     .str.split("_").str[-1]\
