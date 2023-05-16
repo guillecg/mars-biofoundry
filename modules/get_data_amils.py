@@ -7,6 +7,8 @@ import plotly.express as px
 from tabula import read_pdf
 
 
+# TODO: convert to notebook
+
 # NOTE: Most isolates are present at depth 487 (see Table S2 in
 # emi16291-sup-0001-supinfo.docx for Amils et al. 2023)
 
@@ -348,6 +350,52 @@ taxonomy_abundances = pd.read_csv(
     sep=","
 )
 
+# Drop species without abundance data
+taxonomy_abundances = taxonomy_abundances.dropna(subset="id", axis=0)
+
 # Create depth column
 taxonomy_abundances["Depth"] = taxonomy_abundances["sample_id"]\
-    .str.split("-").str[1]
+    .str.split("-").str[1]\
+    .astype(int)
+
+
+# ---------------------------------------------------------------------------- #
+# Get medium for the depths specified in the abundance data
+
+medium_df = medium_df[
+    medium_df["Depth"].isin(taxonomy_abundances["Depth"].unique())
+]
+
+# Get most complete medium according to its species
+depth_counts = medium_df\
+    .groupby("Depth")\
+    .count()\
+    ["Species"]\
+    .sort_values(ascending=False)
+
+complete_depths = depth_counts[
+    depth_counts == medium_df["Species"].nunique()
+].index
+
+# Get missing species at depth 468
+medium_df_wide = pd.pivot(
+    data=medium_df,
+    index="Depth",
+    columns="Species",
+    values="Concentration (ppm)"
+)
+
+missing_species = medium_df_wide\
+    .loc[depth_counts[depth_counts > 35].index]\
+    .isnull()\
+    .sum(axis=0)\
+    .sort_values(ascending=False)
+
+# Filter by complete depths
+taxonomy_abundances = taxonomy_abundances[
+    taxonomy_abundances["Depth"].isin(complete_depths)
+].reset_index(drop=True)
+
+medium_df = medium_df[
+    medium_df["Depth"].isin(complete_depths)
+].reset_index(drop=True)
