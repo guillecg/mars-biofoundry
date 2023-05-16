@@ -277,26 +277,51 @@ fig = px.imshow(
 )
 fig.show()
 
-microbes_df_long = pd.melt(
-    microbes_df,
-    id_vars=["Pathway"],
-    value_vars=[
-        col for col in microbes_df.columns
-        if col not in ["Pathway"]
-    ],
-    var_name="Depth",
-    value_name="Count"
+complete_depths = microbes_df[microbes_df["Pathway"] == "nº compl cyc"]
+complete_depths = complete_depths[complete_depths == 5]\
+    .dropna(axis=1)\
+    .columns
+
+print(
+    "[INFO] Depths with all microbial functions analyzed:",
+    complete_depths
 )
 
-fig = px.bar(
-    data_frame=microbes_df_long,
-    x="Pathway",
-    y="Depth",
-    color="Count"
+fig = px.imshow(
+    img=microbes_df[complete_depths].T.to_numpy(),
+    x=microbes_df["Pathway"],
+    y=complete_depths,
+    labels=dict(
+        x="Pathway",
+        y="Depth",
+        color="Count"
+    ),
+    aspect="equal",
+    width=600,
+    height=600,
+    title="Distribution of microbial functions (only complete functions)"
 )
-fig['layout']['yaxis']['autorange'] = "reversed"
+fig.add_shape(
+    type="rect",
+    x0=0.0,
+    x1=1.0,
+    y0=481,
+    y1=493,
+    xref="paper",
+    yref="y",
+    line_color="red"
+)
+fig.add_shape(
+    type="rect",
+    x0=0.0,
+    x1=1.0,
+    y0=587,
+    y1=625,
+    xref="paper",
+    yref="y",
+    line_color="red"
+)
 fig.show()
-
 
 # ---------------------------------------------------------------------------- #
 # Taxonomy abundances
