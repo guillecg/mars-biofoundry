@@ -46,9 +46,6 @@ elements_df_long[["Depth", "Concentration (ppm)"]] = \
     .apply(lambda row: row.str.replace(",", "."))\
     .astype(float)
 
-# Round to fit Illumina and Roche datasets (Datasets S4 and S5)
-elements_df_long["Depth"] = elements_df_long["Depth"].astype(int)
-
 # Get sorted elements by their maximum concentration
 elements_sorted = elements_df_long\
     .groupby("Species")\
@@ -127,9 +124,6 @@ compounds_df["Depth"] = compounds_df["Depth"]\
     .str.replace(",", ".")\
     .astype(float)
 
-# Round to fit Illumina and Roche datasets (Datasets S4 and S5)
-compounds_df["Depth"] = compounds_df["Depth"].astype(int)
-
 compounds_df_long = pd.melt(
     compounds_df,
     id_vars=["Depth"],
@@ -160,9 +154,6 @@ cations_df = pd.read_excel(
     sheet_name="Sheet1",
     skiprows=1
 )
-
-# Round to fit Illumina and Roche datasets (Datasets S4 and S5)
-cations_df["Depth"] = cations_df["Depth"].astype(int)
 
 cations_df_long = pd.melt(
     cations_df,
@@ -196,9 +187,6 @@ gases_df = gases_df.iloc[:, :-3].copy()
 
 # Rename depth column
 gases_df = gases_df.rename(columns={"Depth mbs": "Depth"})
-
-# Round to fit Illumina and Roche datasets (Datasets S4 and S5)
-gases_df["Depth"] = gases_df["Depth"].astype(int)
 
 # Apply conversion of values
 h2_co2_symbol_map = {
@@ -340,6 +328,9 @@ medium_df = pd.concat(
     axis=0,
     ignore_index=True
 )
+
+# Round to fit Illumina and Roche datasets (Datasets S4 and S5)
+medium_df["Depth"] = medium_df["Depth"].astype(int)
 
 
 # ---------------------------------------------------------------------------- #
