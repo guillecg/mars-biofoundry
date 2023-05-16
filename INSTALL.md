@@ -70,7 +70,8 @@ pip install micom
 
 ### 3. Install other dependencies
 ```{bash}
-conda install openpyxl xlrd odfpy tabula-py plotly
+conda install openpyxl xlrd tabula-py plotly
+conda install -c conda-forge odfpy
 ```
 
 ### 4. For working interactively with Python
