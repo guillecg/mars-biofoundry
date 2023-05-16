@@ -132,18 +132,22 @@ compounds_df["Depth"] = compounds_df["Depth"].astype(int)
 
 compounds_df_long = pd.melt(
     compounds_df,
-    id_vars=["Depth", "pH"],
+    id_vars=["Depth"],
     value_vars=[
         col for col in compounds_df.columns
-        if col not in ["Depth", "pH"]
+        if col not in ["Depth"]
     ],
     var_name="Species",
     value_name="Concentration (ppm)"
 )
 
 # Capitalize to fit format
-compounds_df_long["Species"] = compounds_df_long["Species"].str.capitalize()
+compounds_df_long["Species"] = compounds_df_long["Species"]\
+    .str.capitalize()
 
+# Replace capitalized pH
+compounds_df_long["Species"] = compounds_df_long["Species"]\
+    .str.replace("Ph", "pH")
 
 # ---------------------------------------------------------------------------- #
 # Table S1 - Soluble cations (ppm)
@@ -322,6 +326,21 @@ fig.add_shape(
     line_color="red"
 )
 fig.show()
+
+
+# ---------------------------------------------------------------------------- #
+# Merge all data
+medium_df = pd.concat(
+    [
+        elements_df_long,
+        compounds_df_long,
+        cations_df_long,
+        gases_df_long
+    ],
+    axis=0,
+    ignore_index=True
+)
+
 
 # ---------------------------------------------------------------------------- #
 # Taxonomy abundances
