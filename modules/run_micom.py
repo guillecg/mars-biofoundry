@@ -237,6 +237,11 @@ taxonomy_abundances = pd.merge(
 taxonomy_abundances["id"] = \
     taxonomy_abundances["id"] + "_" + taxonomy_abundances["sample_id"]
 
+print(
+    "[WARNING] Species for which there are no abundance data:\n",
+    taxonomy_abundances[taxonomy_abundances["id"].isnull()]["species"].values
+)
+
 # Save to file
 taxonomy_abundances.to_csv(
     os.path.join(
