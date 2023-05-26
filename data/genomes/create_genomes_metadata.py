@@ -103,6 +103,8 @@ metadata_df = pd.DataFrame.from_records([
     }
 ])
 
+# Sort by code
+metadata_df = metadata_df.sort_values("Code")
 
 metadata_df.to_csv(
     "genomes-metadata.csv",
