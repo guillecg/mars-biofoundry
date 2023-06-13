@@ -27,9 +27,8 @@ pip install modelseedpy
 ```
 
 ### 3. Install other dependencies
-```{bash}
-pip install bioservices
-```
+
+NA
 
 ### 4. For working interactively with Python
 
