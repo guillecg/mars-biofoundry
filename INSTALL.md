@@ -48,6 +48,11 @@ conda install jupyter ipykernel -y
 python -m ipykernel install --user
 ```
 
+### 5. Install RDKit
+
+```{bash}
+conda install -c conda-forge rdkit -y
+```
 
 
 ## Second environment: community modeling with MICOM
