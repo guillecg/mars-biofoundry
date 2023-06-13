@@ -62,10 +62,10 @@ for source_file in os.listdir(os.path.join(DATA_DIR, "sources")):
         rules_file="../data/retropath/ec_numbers_all_rules.csv",
         outdir=os.path.join(DATA_DIR, "experiments"),
         kexec="/Applications/KNIME 4.3.0.app/Contents/MacOS/knime",
-        max_steps=3,
+        dmax=16,
+        dmin=6,
+        max_steps=10,
         topx=100,
-        dmin=0,
-        dmax=100,
         mwmax_source=1000
     )
     break
