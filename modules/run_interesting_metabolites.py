@@ -1,0 +1,71 @@
+import os
+
+import pandas as pd
+
+from rdkit import Chem
+
+from retropath2_wrapper import retropath2
+
+
+DATA_DIR = "../data/retropath/interesting_metabolites/"
+
+metabolites_df = pd.read_csv(
+    os.path.join(
+        DATA_DIR,
+        "metabolitos_producibles.csv"
+    )
+)
+
+# Get InChIs
+metabolites_df["InChI"] = \
+    metabolites_df["Smile"]\
+    .dropna(how="all")\
+    .apply(lambda row: Chem.MolToInchi(Chem.MolFromSmiles(row)))
+
+metabolites_df.to_csv(
+    os.path.join(
+        DATA_DIR,
+        "metabolitos_producibles_inchi.csv"
+    ),
+    header=True,
+    index=False
+)
+
+# Drop metabolites withou InChI
+metabolites_df = metabolites_df.dropna(subset="InChI")
+
+# Rename to fit RetroPath2.0 format
+metabolites_df = metabolites_df\
+    .rename(columns={"Molecule": "Name"})
+
+metabolites_df["Name"] = metabolites_df["Name"].str.lower()
+
+# Create a source file for each compound
+for _, row in metabolites_df.iterrows():
+    compound_name = row["Name"]
+    row = row.to_frame().T[["Name", "InChI"]]
+
+    row.to_csv(
+        os.path.join(
+            DATA_DIR,
+            "sources",
+            f"{compound_name}.csv"
+        ),
+        header=True,
+        index=False
+    )
+
+for source_file in os.listdir(os.path.join(DATA_DIR, "sources")):
+    r_code = retropath2(
+        sink_file="../data/retropath/ec_numbers_all_sink.csv",
+        source_file=source_file,
+        rules_file="../data/retropath/ec_numbers_all_rules.csv",
+        outdir="/path/to/outdir",
+        kexec="/Applications/KNIME 4.3.0.app/Contents/MacOS/knime",
+        max_steps=3,
+        topx=100,
+        dmin=0,
+        dmax=100,
+        mwmax_source=1000
+    )
+    break
