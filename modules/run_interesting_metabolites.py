@@ -60,7 +60,7 @@ for source_file in os.listdir(os.path.join(DATA_DIR, "sources")):
         sink_file="../data/retropath/ec_numbers_all_sink.csv",
         source_file=source_file,
         rules_file="../data/retropath/ec_numbers_all_rules.csv",
-        outdir="/path/to/outdir",
+        outdir=os.path.join(DATA_DIR, "experiments"),
         kexec="/Applications/KNIME 4.3.0.app/Contents/MacOS/knime",
         max_steps=3,
         topx=100,
