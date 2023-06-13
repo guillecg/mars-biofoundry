@@ -27,8 +27,19 @@ pip install modelseedpy
 ```
 
 ### 3. Install other dependencies
+```{bash}
+conda clean --all -y
+conda update --all -y
+conda install -c conda-forge retropath2_wrapper -y
+```
 
-NA
+A reinstallation is needed:
+
+```{bash}
+conda clean --all -y
+conda update --all -y
+conda install -c conda-forge retropath2_wrapper -y
+```
 
 ### 4. For working interactively with Python
 
