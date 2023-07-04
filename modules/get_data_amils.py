@@ -99,7 +99,7 @@ fig.show()
 
 
 # ---------------------------------------------------------------------------- #
-# Dataset S3 - Ionic chromatography of BH10 soluble organic and iniorganic anions (ppm)
+# Dataset S3 - Ionic chromatography of BH10 soluble organic and inorganic anions (ppm)
 
 compounds_df = pd.read_excel(
     os.path.join(
@@ -147,7 +147,7 @@ compounds_df_long["Species"] = compounds_df_long["Species"]\
 
 # Replace capitalized pH
 compounds_df_long["Species"] = compounds_df_long["Species"]\
-    .str.replace("Ph", "pH")
+    .str.replace("Ph(?!\w+)", "pH", regex=True)
 
 # ---------------------------------------------------------------------------- #
 # Table S1 - Soluble cations (ppm)
