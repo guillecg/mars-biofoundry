@@ -38,7 +38,9 @@ metabolites_df = metabolites_df.dropna(subset="InChI")
 metabolites_df = metabolites_df\
     .rename(columns={"Molecule": "Name"})
 
-metabolites_df["Name"] = metabolites_df["Name"].str.lower()
+metabolites_df["Name"] = metabolites_df["Name"]\
+    .str.lower()\
+    .str.replace(" ", "_")
 
 # Create a source file for each compound
 for _, row in metabolites_df.iterrows():
@@ -56,6 +58,7 @@ for _, row in metabolites_df.iterrows():
     )
 
 for source_file in os.listdir(os.path.join(DATA_DIR, "sources")):
+
     r_code = retropath2(
         sink_file="../data/retropath/ec_numbers_all_sink.csv",
         source_file=source_file,
@@ -68,4 +71,3 @@ for source_file in os.listdir(os.path.join(DATA_DIR, "sources")):
         topx=100,
         mwmax_source=1000
     )
-    break
