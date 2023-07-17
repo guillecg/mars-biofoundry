@@ -62,7 +62,7 @@ fig = px.bar(
     color_discrete_sequence=px.colors.qualitative.Pastel,
     width=750,
     height=500,
-    title="Distribution of metabolic model elements across species"
+    # title="Distribution of metabolic model elements across species"
 )
 
 pio.write_image(
