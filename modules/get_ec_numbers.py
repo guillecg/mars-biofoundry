@@ -6,10 +6,6 @@ import csv
 import pandas as pd
 
 
-# Read model
-model_path = "../data/modelseedpy/aci_formatted.json"
-
-
 def get_ec_from_model(model_path: str) -> pd.DataFrame:
 
     with open(model_path, mode="r") as fh:
