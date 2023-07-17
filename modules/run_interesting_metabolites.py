@@ -60,11 +60,22 @@ for _, row in metabolites_df.iterrows():
 for source_file in os.listdir(os.path.join(DATA_DIR, "sources")):
 
     r_code = retropath2(
-        sink_file="../data/retropath/ec_numbers_all_sink.csv",
-        source_file=source_file,
-        rules_file="../data/retropath/ec_numbers_all_rules.csv",
-        outdir=os.path.join(DATA_DIR, "experiments"),
-        kexec="/Applications/KNIME 4.3.0.app/Contents/MacOS/knime",
+        rules_file=os.path.abspath(
+            "../data/retropath/ec_numbers_all_rules.csv"
+        ),
+        sink_file=os.path.abspath(
+            "../data/retropath/ec_numbers_all_sink.csv"
+        ),
+        source_file=os.path.abspath(
+            os.path.join(DATA_DIR, "sources", source_file)
+        ),
+        outdir=os.path.abspath(
+            os.path.join(
+                DATA_DIR,
+                "experiments",
+                os.path.splitext(source_file)[0]
+            )
+        ),
         dmax=16,
         dmin=6,
         max_steps=10,
