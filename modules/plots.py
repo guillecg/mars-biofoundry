@@ -67,6 +67,6 @@ fig = px.bar(
 
 pio.write_image(
     fig=fig,
-    file="../data/poster/figure3.jpg",
+    file="../data/figures/metabolic-models.jpg",
     scale=6
 )
