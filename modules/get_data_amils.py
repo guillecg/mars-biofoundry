@@ -61,7 +61,7 @@ fig = px.scatter(
     x="Concentration (ppm)",
     y="Depth",
     color="Species",
-    color_discrete_sequence=px.colors.qualitative.Alphabet,
+    color_discrete_sequence=px.colors.qualitative.Pastel,
     category_orders={"Species": elements_sorted},
     title="Concentration of elements across the vertical column"
 )
@@ -74,7 +74,7 @@ fig = px.scatter(
     log_x=True,
     y="Depth",
     color="Species",
-    color_discrete_sequence=px.colors.qualitative.Alphabet,
+    color_discrete_sequence=px.colors.qualitative.Pastel,
     category_orders={"Species": elements_sorted},
     title="Concentration of elements across the vertical column"
 )
@@ -87,7 +87,7 @@ fig = px.violin(
     y="Concentration (ppm)",
     log_y=True,
     color="Species",
-    color_discrete_sequence=px.colors.qualitative.Alphabet,
+    color_discrete_sequence=px.colors.qualitative.Pastel,
     category_orders={"Species": elements_sorted},
     title="Distribution of concentrations per element"
 )
@@ -399,3 +399,25 @@ taxonomy_abundances = taxonomy_abundances[
 medium_df = medium_df[
     medium_df["Depth"].isin(complete_depths)
 ].reset_index(drop=True)
+
+
+medium_df.to_csv(
+    "../data/medium.csv",
+    index=False,
+    header=True,
+    sep=";"
+)
+
+fig = px.scatter(
+    data_frame=medium_df,
+    x="Concentration (ppm)",
+    log_x=True,
+    y="Depth",
+    color="Species",
+    color_discrete_sequence=px.colors.qualitative.Pastel,
+    category_orders={"Species": elements_sorted},
+    title="Concentration of elements across the vertical column"
+)
+fig.update_layout(xaxis_title="Concentration log(ppm)")
+fig['layout']['yaxis']['autorange'] = "reversed"
+fig.show()
