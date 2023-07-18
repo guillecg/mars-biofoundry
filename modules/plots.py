@@ -70,3 +70,52 @@ pio.write_image(
     file="../data/figures/metabolic-models.jpg",
     scale=6
 )
+
+
+# ---------------------------------------------------------------------------- #
+
+
+import numpy as np
+import pandas as pd
+
+import plotly.io as pio
+import plotly.express as px
+
+pio.templates.default = "plotly_white"
+
+
+taxonomy = pd.read_csv("../data/micom/rio_tinto/amils_2023/taxonomy.csv")
+
+taxonomy["Depth"] = taxonomy["sample_id"]\
+    .str.split("-").str[1].astype(int, errors="ignore")
+
+taxonomy["log_abundance"] = np.log1p(taxonomy["abundance"])
+
+
+taxonomy_matrix = taxonomy.pivot(
+    columns="species",
+    index="Depth",
+    values="log_abundance"
+)
+
+fig = px.imshow(
+    img=taxonomy_matrix,
+    x=taxonomy_matrix.columns,
+    y=taxonomy_matrix.index,
+    labels=dict(
+        x="Species",
+        y="Depth",
+        color="log(Abundance)"
+    ),
+    aspect="auto",
+    width=800,
+    height=600,
+    # title="Distribution of microbial functions across the vertical column"
+)
+fig.show()
+
+pio.write_image(
+    fig=fig,
+    file="../data/figures/amils2023-abundances-depth.jpg",
+    scale=6
+)
