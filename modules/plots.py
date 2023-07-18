@@ -119,3 +119,23 @@ pio.write_image(
     file="../data/figures/amils2023-abundances-depth.jpg",
     scale=6
 )
+
+
+medium_df = pd.read_csv(
+    "../data/medium.csv",
+    sep=";"
+)
+
+fig = px.scatter(
+    data_frame=medium_df,
+    x="Concentration (ppm)",
+    log_x=True,
+    y="Depth",
+    color="Species",
+    color_discrete_sequence=px.colors.qualitative.Pastel,
+    #category_orders={"Species": elements_sorted},
+    title="Concentration of elements across the vertical column"
+)
+fig.update_layout(xaxis_title="Concentration log(ppm)")
+fig['layout']['yaxis']['autorange'] = "reversed"
+fig.show()
