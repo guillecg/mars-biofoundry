@@ -86,6 +86,9 @@ pio.templates.default = "plotly_white"
 
 taxonomy = pd.read_csv("../data/micom/rio_tinto/amils_2023/taxonomy.csv")
 
+taxonomy["Code"] = taxonomy["file"]\
+    .apply(lambda row: row.split("/")[-1].split("_")[0])
+
 taxonomy["Depth"] = taxonomy["sample_id"]\
     .str.split("-").str[1].astype(int, errors="ignore")
 
@@ -93,7 +96,7 @@ taxonomy["log_abundance"] = np.log1p(taxonomy["abundance"])
 
 
 taxonomy_matrix = taxonomy.pivot(
-    columns="species",
+    columns="Code",
     index="Depth",
     values="log_abundance"
 )
