@@ -1,67 +1,54 @@
-import os
-import time
+import logging
 
-import pandas as pd
+import os
 
 from modelseedpy import MSBuilder, MSGenome
 
-from cobra.io import load_json_model, save_json_model
+import cobra
+from cobra.io import load_json_model
 
 
-# (DEPRECATED) Download protein annotations for a given organims
-# Check: https://astrobiomike.github.io/unix/ncbi_eutils
-# Check: https://bioinformatics.stackexchange.com/a/16421
+FILE = os.path.basename(__file__).replace(".py", "")
 
-# Manually download protein annotations from GenBank's website
-# For example, for tez: https://www.ncbi.nlm.nih.gov/nuccore/CP019229.1
-
-DATA_DIR = "../data/genomes/"
-
-metadata_df = pd.read_csv(
-    os.path.join(
-        DATA_DIR,
-        "genomes-metadata.csv"
-    )
+# Configure logging
+logging.basicConfig(
+    filename=f"{FILE}.log",
+    filemode="w",
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=logging.INFO
 )
+LOGGER = logging.getLogger(FILE)
 
-# Drop rercords with missing data
-metadata_df = metadata_df.dropna(axis=0)
 
-for _, row in metadata_df.iterrows():
-    organism = row["Code"]
+def build_model(genome_path: str) -> cobra.Model:
+    LOGGER.info(f"Starting with genome")
 
-    genome_path = os.path.join(
-        DATA_DIR,
-        row["Code"],
-        row["Protein annotation file"]
-    )
+    # Load annotated genome
     genome = MSGenome.from_fasta(
         genome_path,
         split=" "
     )
-    print('Number of features:', len(genome.features))
 
+    LOGGER.info(f"Number of features: {len(genome.features)}")
+
+    # Build metabolic model from annotated genome
     model = MSBuilder.build_metabolic_model(
-        model_id=organism,
+        model_id=os.path.basename(genome_path),
         genome=genome,
         gapfill_media=None,
-        # template=template,
         allow_all_non_grp_reactions=True,
         annotate_with_rast=True
     )
 
-    # Save model
-    model_path = os.path.join(
-        "../data/modelseedpy/",
-        f"{organism}.json"
-    )
-    save_json_model(
-        model=model,
-        filename=model_path
-    )
+    return model
 
-    # Test saved model
-    assert load_json_model(model_path), "[ERROR] Could not read model!"
 
-    # Wait between calls
-    time.sleep(0.5)
+def validate_model(model_path: str) -> None:
+    try:
+        load_json_model(model_path)
+        LOGGER.info(f"Correctly loaded {model_path}")
+    except FileNotFoundError:
+        LOGGER.exception(f"Cannot load {model_path}")
+    else:
+        LOGGER.exception(f"Unhandled exception while loading {model_path}")
