@@ -9,6 +9,19 @@ from rdkit import Chem
 
 
 class RetroPathPreloader(object):
+    """
+    Auxiliary class for generating RetroPath2.0 inputs.
+
+    Parameters
+    ----------
+    config : dict
+        The configuration dictionary.
+
+    Examples
+    --------
+    None
+
+    """
 
     def __init__(self, config: dict) -> None:
         self.config = config
