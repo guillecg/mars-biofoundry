@@ -2,6 +2,7 @@ import os
 
 import json
 
+import csv
 import pandas as pd
 
 
@@ -21,7 +22,7 @@ class RetroPathPreloader(object):
 
         Returns
         -------
-        ec_numbers : DataFrame
+        ec_numbers_df : DataFrame
             Dataframe containing each all EC numbers found for the model.
 
         Examples
@@ -48,22 +49,77 @@ class RetroPathPreloader(object):
             )
         )
 
-        ec_numbers = modelseed_df[
+        ec_numbers_df = modelseed_df[
             modelseed_df["id"].isin(reaction_ids)
         ]["ec_numbers"]
 
         # Explode series since there may be multiple EC numbers per reaction
-        ec_numbers = ec_numbers.str.split("|").explode()
+        ec_numbers_df = ec_numbers_df.str.split("|").explode()
 
         # Convert to frame
-        ec_numbers = ec_numbers.to_frame()
+        ec_numbers_df = ec_numbers_df.to_frame()
 
         # Add model ID
-        ec_numbers["ID"] = model_dict["id"]
+        ec_numbers_df["ID"] = model_dict["id"]
 
         # TODO: log statistics
 
-        return ec_numbers
+        return ec_numbers_df
+
+    def get_ec_numbers(self, metadata: pd.DataFrame) -> pd.DataFrame:
+        """
+        Get all the EC numbers for each model specified in the metadata.
+
+        Parameters
+        ----------
+        metadata : str
+            The dataframe containing the models' paths.
+
+        Returns
+        -------
+        all_ec_numbers_df : DataFrame
+            Dataframe containing each all EC numbers found for the model.
+
+        Examples
+        --------
+        None
+
+        """
+        # Create empty dataframe
+        all_ec_numbers_df = pd.DataFrame()
+
+        for organism in metadata["Code"]:
+
+            model_path = os.path.join(
+                self.config["paths"]["models"],
+                f"{organism}.json"
+            )
+
+            # Append results to dataframe
+            all_ec_numbers_df = pd.concat(
+                [
+                    all_ec_numbers_df,
+                    self.get_ec_from_model(model_path)
+                ],
+                axis=0,
+                ignore_index=True
+            )
+
+        # Save to file
+        all_ec_numbers_df.to_csv(
+            os.path.join(
+                self.config["paths"]["retropath"],
+                self.config["retropath"]["files"]["ec_numbers"]
+            ),
+            header=True,
+            index=False,
+            sep=",",
+            mode="w",
+            quotechar='"',
+            quoting=csv.QUOTE_MINIMAL # Avoid errors with commas in names
+        )
+
+        return all_ec_numbers_df
 
     def get_rules(self) -> pd.DataFrame:
         """
