@@ -7,8 +7,10 @@ import pandas as pd
 
 from rdkit import Chem
 
+from modules.base import BasePreloader
 
-class RetroPathPreloader(object):
+
+class RetroPathPreloader(BasePreloader):
     """
     Auxiliary class for generating RetroPath2.0 inputs.
 
