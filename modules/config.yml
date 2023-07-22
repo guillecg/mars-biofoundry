@@ -8,6 +8,6 @@ paths:
 
 retropath:
   files:
-    ec_numbers: "ec_numbers_all.csv"
-    rules: "ec_numbers_all_rules.csv"
-    sink: "ec_numbers_all_sink.csv"
+    ec_numbers: "ec_numbers.csv"
+    rules: "rules.csv"
+    sink: "sink.csv"
