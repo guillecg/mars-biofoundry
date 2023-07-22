@@ -7,9 +7,6 @@ import plotly.io as pio
 import plotly.express as px
 
 
-DATA_DIR = "../data/retropath/interesting_metabolites/"
-
-
 def get_retropath_results(config: dict) -> pd.DataFrame:
     """
     Get the results of the RetroPath2.0 analysis by inspecting each source
@@ -57,7 +54,7 @@ def get_retropath_results(config: dict) -> pd.DataFrame:
 
         elif source_files == ["source-in-sink.csv"]:
             source_sink_df = pd.read_csv(
-                os.path.join(DATA_DIR, "experiments", source, "source-in-sink.csv")
+                os.path.join(experiments_dir, source, "source-in-sink.csv")
             )
 
             if len(source_sink_df):
@@ -75,7 +72,13 @@ def get_retropath_results(config: dict) -> pd.DataFrame:
         )
 
     # Get metabolites not produced
-    all_sources = os.listdir(os.path.join(DATA_DIR, "sources"))
+    all_sources = os.listdir(
+        os.path.join(
+            config["paths"]["retropath"],
+            "interesting_metabolites/",
+            "sources/"
+        )
+    )
     all_sources = set([item.replace(".csv", "") for item in all_sources])
 
     processed_sources = set(results_df["Source"].values)
