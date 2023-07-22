@@ -43,7 +43,7 @@ class RetroPathPreloader(object):
         # Get EC numbers from reactions in ModelSEEDDatabase
         modelseed_df = pd.read_table(
             os.path.join(
-                self.config["modelseed"],
+                self.config["paths"]["modelseed"],
                 "reactions.tsv"
             )
         )
