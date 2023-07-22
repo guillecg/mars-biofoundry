@@ -4,11 +4,7 @@ from abc import ABC, abstractmethod
 class BaseDataLoader(ABC):
 
     @abstractmethod
-    def load():
-        raise NotImplementedError
-
-    @abstractmethod
-    def save():
+    def get_data():
         raise NotImplementedError
 
 
