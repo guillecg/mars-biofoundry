@@ -7,11 +7,10 @@ import pandas as pd
 
 class RetroPathPreloader(object):
 
-    @staticmethod
-    def get_ec_from_model(
-        model_path: str,
-        modelseed_dir: str
-    ) -> pd.DataFrame:
+    def __init__(self, config: dict) -> None:
+        self.config = config
+
+    def get_ec_from_model(self, model_path: str) -> pd.DataFrame:
         """
         Get the EC numbers from the GEM model in JSON format.
 
@@ -19,8 +18,6 @@ class RetroPathPreloader(object):
         ----------
         model_path : str
             The path to the model's JSON file.
-        modelseed_dir : str
-            The path to the directory containing the ModelSEED database.
 
         Returns
         -------
@@ -44,7 +41,10 @@ class RetroPathPreloader(object):
 
         # Get EC numbers from reactions in ModelSEEDDatabase
         modelseed_df = pd.read_table(
-            os.path.join(modelseed_dir, "reactions.tsv")
+            os.path.join(
+                self.config["modelseed"],
+                "reactions.tsv"
+            )
         )
 
         ec_numbers = modelseed_df[
