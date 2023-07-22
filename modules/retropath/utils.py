@@ -11,14 +11,20 @@ class RetroPathPreloader(object):
     def __init__(self, config: dict) -> None:
         self.config = config
 
-    def get_ec_from_model(self, model_path: str) -> pd.DataFrame:
+    @staticmethod
+    def get_ec_from_model(
+        model_dict: dict,
+        modelseed_reactions: pd.DataFrame
+    ) -> pd.DataFrame:
         """
-        Get the EC numbers from the GEM model in JSON format.
+        Get the EC numbers from a GEM model.
 
         Parameters
         ----------
-        model_path : str
-            The path to the model's JSON file.
+        model_dict : dict
+            The model as a dictionary.
+        modelseed_reactions : DataFrame
+            ModelSEED reactions mapping model IDs (RXNs) to EC numbers.
 
         Returns
         -------
@@ -31,26 +37,14 @@ class RetroPathPreloader(object):
 
         """
 
-        # Load model
-        with open(model_path, mode="r") as fh:
-            model_dict = json.loads(fh.read())
-
         # Get reaction IDs
         reaction_ids = [
             item["id"].split("_")[0]
             for item in model_dict["reactions"]
         ]
 
-        # Get EC numbers from reactions in ModelSEEDDatabase
-        modelseed_df = pd.read_table(
-            os.path.join(
-                self.config["paths"]["modelseed"],
-                "reactions.tsv"
-            )
-        )
-
-        ec_numbers_df = modelseed_df[
-            modelseed_df["id"].isin(reaction_ids)
+        ec_numbers_df = modelseed_reactions[
+            modelseed_reactions["id"].isin(reaction_ids)
         ]["ec_numbers"]
 
         # Explode series since there may be multiple EC numbers per reaction
@@ -85,6 +79,15 @@ class RetroPathPreloader(object):
         None
 
         """
+
+        # Get EC numbers from reactions in ModelSEEDDatabase
+        modelseed_reactions = pd.read_table(
+            os.path.join(
+                self.config["paths"]["modelseed"],
+                "reactions.tsv"
+            )
+        )
+
         # Create empty dataframe
         all_ec_numbers_df = pd.DataFrame()
 
@@ -95,11 +98,18 @@ class RetroPathPreloader(object):
                 f"{organism}.json"
             )
 
+            # Load model
+            with open(model_path, mode="r") as fh:
+                model_dict = json.loads(fh.read())
+
             # Append results to dataframe
             all_ec_numbers_df = pd.concat(
                 [
                     all_ec_numbers_df,
-                    self.get_ec_from_model(model_path)
+                    self.get_ec_from_model(
+                        model_dict=model_dict,
+                        modelseed_reactions=modelseed_reactions
+                    )
                 ],
                 axis=0,
                 ignore_index=True
