@@ -11,3 +11,4 @@ retropath:
     ec_numbers: "ec_numbers.csv"
     rules: "rules.csv"
     sink: "sink.csv"
+    sources: "metabolitos_producibles.csv"
