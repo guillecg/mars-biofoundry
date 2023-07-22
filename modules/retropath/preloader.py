@@ -26,6 +26,8 @@ class RetroPathPreloader(BasePreloader):
     """
 
     def __init__(self, config: dict) -> None:
+        super().__init__()
+
         self.config = config
 
     @staticmethod
