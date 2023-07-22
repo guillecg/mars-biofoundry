@@ -1,9 +1,10 @@
 paths:
   genomes: "../data/genomes/"
+  metanetx: "../data/metanetx/"
   models: "../data/modelseedpy/"
   modelseed: "../data/modelseed/"
-  retrorules: "../data/retrorules/retrorules_rr01_rp2_flat_forward.csv"
   retropath: "../data/retropath/"
+  retrorules: "../data/retrorules/retrorules_rr01_rp2_flat_forward.csv"
 
 retropath:
   files:
