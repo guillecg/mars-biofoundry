@@ -170,6 +170,19 @@ class RetroPathPreloader(object):
             retrorules_df["EC number"].isin(ec_numbers)
         ]
 
+        # Save to file
+        rules_df.to_csv(
+            os.path.join(
+                self.config["paths"]["retropath"],
+                self.config["retropath"]["files"]["rules"]
+            ),
+            header=True,
+            index=False,
+            sep=",",
+            quotechar='"',
+            quoting=csv.QUOTE_MINIMAL # Avoid errors with commas in names
+        )
+
         return rules_df
 
     def get_sink(self) -> None:
