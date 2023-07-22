@@ -1,4 +1,5 @@
 paths:
+  figures: "../data/figures/"
   genomes: "../data/genomes/"
   metanetx: "../data/metanetx/"
   models: "../data/gem/"
@@ -18,3 +19,6 @@ retropath:
     max_steps: 10
     topx: 100
     mwmax_source: 1000
+
+figures:
+  template: "plotly_white"
