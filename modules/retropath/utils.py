@@ -30,6 +30,7 @@ class RetroPathPreloader(object):
 
         """
 
+        # Load model
         with open(model_path, mode="r") as fh:
             model_dict = json.loads(fh.read())
 
@@ -64,8 +65,56 @@ class RetroPathPreloader(object):
 
         return ec_numbers
 
-    def get_rules(self) -> None:
-        raise NotImplementedError
+    def get_rules(self) -> pd.DataFrame:
+        """
+        Get the rules by filtering RetroRules database by the EC numbers found
+        in the community.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        rules_df : DataFrame
+            Dataframe containing all rules found in the community.
+
+        Examples
+        --------
+        None
+
+        """
+
+        # Load EC numbers in the community
+        ec_num_df = pd.read_csv(
+            os.path.join(
+                self.config["paths"]["retropath"],
+                self.config["retropath"]["files"]["ec_numbers"]
+            ),
+            sep=","
+        )
+
+        # Load RetroRules database
+        retrorules_df = pd.read_csv(
+            self.config["paths"]["retrorules"],
+            sep=","
+        )
+
+        # Drop potential duplicates (more than one species with the same EC)
+        ec_numbers = ec_num_df["ec_numbers"].unique()
+
+        # Explode rules with multiple EC numbers
+        retrorules_df["EC number"] = retrorules_df["EC number"].str.split(";")
+        retrorules_df = retrorules_df\
+            .explode("EC number")\
+            .reset_index(drop=True)
+
+        # Filter by found EC numbers in the community
+        rules_df = retrorules_df[
+            retrorules_df["EC number"].isin(ec_numbers)
+        ]
+
+        return rules_df
 
     def get_sink(self) -> None:
         raise NotImplementedError

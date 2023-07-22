@@ -2,6 +2,7 @@ paths:
   genomes: "../data/genomes/"
   models: "../data/modelseedpy/"
   modelseed: "../data/modelseed/"
+  retrorules: "../data/retrorules/retrorules_rr01_rp2_flat_forward.csv"
   retropath: "../data/retropath/"
 
 retropath:
