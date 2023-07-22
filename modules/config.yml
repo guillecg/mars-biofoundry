@@ -12,3 +12,9 @@ retropath:
     rules: "rules.csv"
     sink: "sink.csv"
     sources: "metabolitos_producibles.csv"
+  params:
+    dmax: 16
+    dmin: 6
+    max_steps: 10
+    topx: 100
+    mwmax_source: 1000

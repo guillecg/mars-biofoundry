@@ -5,6 +5,8 @@ import json
 import csv
 import pandas as pd
 
+from rdkit import Chem
+
 
 class RetroPathPreloader(object):
 
@@ -357,14 +359,69 @@ class RetroPathPreloader(object):
 
         return sink_df
 
-    def get_sources(self) -> None:
-        raise NotImplementedError
+    def get_sources(self) -> pd.DataFrame:
+        """
+        Get the sources by creating a folder and CSV file for each compound
+        in the specified sources file.
 
+        Parameters
+        ----------
+        None
 
-class RetroPathLauncher(object):
+        Returns
+        -------
+        sources_df : DataFrame
+            Dataframe containing all the source compounds with their 
+            corresponding InChI.
 
-    def __init__(self) -> None:
-        raise NotImplementedError
+        Examples
+        --------
+        None
 
-    def launch(self) -> None:
-        raise NotImplementedError
+        """
+
+        sources_df = pd.read_csv(
+            os.path.join(
+                self.config["paths"]["retropath"],
+                "interesting_metabolites/",
+                self.config["retropath"]["files"]["sources"]
+            )
+        )
+
+        # Get InChIs
+        sources_df["InChI"] = \
+            sources_df["Smile"]\
+            .dropna(how="all")\
+            .apply(lambda row: Chem.MolToInchi(Chem.MolFromSmiles(row)))
+
+        # TODO: log compounds with missing InChI
+
+        # Drop metabolites withou InChI
+        sources_df = sources_df.dropna(subset="InChI")
+
+        # Rename to fit RetroPath2.0 format
+        sources_df = sources_df\
+            .rename(columns={"Molecule": "Name"})
+
+        sources_df["Name"] = sources_df["Name"]\
+            .str.lower()\
+            .str.replace(" ", "_")
+
+        # Create a source file for each compound
+        for _, row in sources_df.iterrows():
+            compound_name = row["Name"]
+
+            row = row.to_frame().T[["Name", "InChI"]]
+
+            row.to_csv(
+                os.path.join(
+                    self.config["paths"]["retropath"],
+                    "interesting_metabolites/",
+                    "sources/",
+                    f"{compound_name}.csv"
+                ),
+                header=True,
+                index=False
+            )
+
+        return sources_df
