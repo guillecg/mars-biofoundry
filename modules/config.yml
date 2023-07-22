@@ -1,5 +1,5 @@
 paths:
   genomes: "../data/genomes/"
   models: "../data/modelseedpy/"
-  retropath: "../data/retropath/"
   modelseed: "../data/modelseed/"
+  retropath: "../data/retropath/"
