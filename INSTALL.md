@@ -47,7 +47,7 @@ conda install -c conda-forge retropath2_wrapper -y
 ### 4. Install other dependencies
 
 ```{bash}
-conda install -c conda-forge rdkit tabula-py python-kaleido -y
+conda install -c conda-forge rdkit tabula-py python-kaleido plotly -y
 ```
 
 ### 5. For working interactively with Python
