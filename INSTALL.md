@@ -6,6 +6,9 @@
 
 ```{bash}
 conda create -n biofoundry python=3.10 -y
+
+conda clean --all -y
+conda update --all -y
 ```
 
 ### 1. Install SciPy
