@@ -3,6 +3,10 @@ import logging
 import os
 import time
 
+import json
+import string
+from functools import reduce
+
 import pandas as pd
 
 from modelseedpy import MSBuilder, MSGenome
@@ -43,7 +47,7 @@ class ModelValidator(BaseModelValidator):
     @staticmethod
     def validate_loading(model_path: str) -> None:
         """
-        Validates whether the model can be loaded.
+        Validate whether the model can be loaded.
 
         Parameters
         ----------
@@ -69,7 +73,7 @@ class ModelValidator(BaseModelValidator):
 
     def validate(self, model_path: str) -> None:
         """
-        Validates the model according to a set of predefined checks.
+        Validate the model according to a set of predefined checks.
 
         Parameters
         ----------
@@ -90,7 +94,7 @@ class ModelValidator(BaseModelValidator):
 
 class ModelBuilder(BaseModelBuilder):
     """
-    Auxiliary class for validating generated GEMs.
+    Auxiliary class for building COBRA GEMs from annotated genomes.
 
     Parameters
     ----------
@@ -114,7 +118,7 @@ class ModelBuilder(BaseModelBuilder):
     @staticmethod
     def build_model(genome_path: str) -> cobra.Model:
         """
-        Builds a model from its annotated genome.
+        Build a model from its annotated genome.
 
         Parameters
         ----------
@@ -153,9 +157,165 @@ class ModelBuilder(BaseModelBuilder):
 
         return model
 
+    @staticmethod
+    def rename_compartments(model_text: str) -> str:
+        """
+        Rename compartments to fit COBRA conventions.
+
+        Parameters
+        ----------
+        model_text : str
+            The full model as string.
+
+        Returns
+        -------
+        _ : str
+            The model's text with compartments renamed.
+
+        Notes
+        -----
+        ModelSEEDpy creates compartments with numbers (e.g. "c0" instead of 
+        "c") which cannot be recognized by COBRApy (which is used by MICOM).
+
+        Examples
+        --------
+        None
+
+        """
+
+        return model_text\
+            .replace("_c0", "_c")\
+            .replace("_e0", "_e")\
+            .replace('"c0"', '"c"')\
+            .replace('"e0"', '"e"')\
+            .replace("\n", "")\
+            .replace(
+                '"c":""', '"c":"cytosol"'
+            )\
+            .replace(
+                '"e":""', '"e":"extracellular"'
+            )
+
+    def rename_metabolites(self, model_text: str) -> str:
+        """
+        Rename metabolites to add ModelSEED compound ID and abbreviation for
+        better tracking of compounds.
+
+        Parameters
+        ----------
+        model_text : str
+            The full model as string.
+
+        Returns
+        -------
+        _ : str
+            The model's text with metabolites renamed.
+
+        Examples
+        --------
+        None
+
+        """
+
+        modelseed_cpd = pd.read_table(
+            os.path.join(
+                self.config["paths"]["modelseed"],
+                "compounds.tsv"
+            ),
+            dtype=object # Avoid warnings
+        )
+
+        # Avoid errors in COBRApy due to punctuation and whitespaces in names
+        modelseed_cpd["abbreviation"] = modelseed_cpd["abbreviation"]\
+            .str.replace(
+                pat=r"[{}|\s]".format(string.punctuation),
+                repl="-",
+                regex=True
+            )
+
+        # Create new column to avoid abbreviation duplicates
+        modelseed_cpd["abbreviation_id"] = \
+            modelseed_cpd["id"] + "=" + modelseed_cpd["abbreviation"]
+
+        return reduce(
+            lambda a, kv: \
+                a.replace(*kv),
+                modelseed_cpd[["id", "abbreviation_id"]].to_numpy(dtype=str),
+                model_text
+        )
+
+    @staticmethod
+    def get_counts(model: dict, element: str) -> int:
+        """
+        Count metabolites and/or compartments in COBRA models.
+
+        Parameters
+        ----------
+        model : dict
+            The selected model as dictionary.
+        element : str
+            The selected element ("metabolites" or "reactions").
+
+        Returns
+        -------
+        _ : int
+            The number of elements found in the model.
+
+        Examples
+        --------
+        None
+
+        """
+
+        if type not in ("metabolites", "reactions"):
+            raise NotImplementedError
+
+        return len(model[element])
+
+    def format_model(self, model_path: str) -> str:
+        """
+        Format model to fit COBRA conventions and better track compounds.
+
+        Parameters
+        ----------
+        model_path : str
+            The path to the model's JSON file.
+
+        Returns
+        -------
+        model_path_new : str
+            The formatted model's path.
+
+        Examples
+        --------
+        None
+
+        """
+
+        # Create new path for the formatted model
+        model_path_new = model_path\
+            .replace(".json", "_formatted.json")
+
+        # Load model as text and rename compartments and metabolites
+        with open(model_path, "r") as fh:
+            model_text = fh.read()
+            model_text = self.rename_compartments(model_text)
+            model_text = self.rename_metabolites(model_text)
+
+        # Dump formatted model
+        with open(model_path_new, "w") as fh:
+            json.dump(
+                obj=json.loads(model_text),
+                fp=fh,
+                indent=4,
+                sort_keys=False
+            )
+
+        return model_path_new
+
     def build(self, metadata_df: pd.DataFrame) -> None:
         """
-        Builds all models from their respectives annotated genomes in 
+        Build all models from their respectives annotated genomes in 
         metadata_df.
 
         Parameters
@@ -194,8 +354,10 @@ class ModelBuilder(BaseModelBuilder):
                 filename=model_path
             )
 
+            model_path_formatted = self.format_model(model_path)
+
             # Test saved model
-            self.model_validator.validate(model_path)
+            self.model_validator.validate(model_path_formatted)
 
             # Wait between calls
             time.sleep(0.5)
