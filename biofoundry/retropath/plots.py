@@ -18,7 +18,7 @@ def get_retropath_results(config: dict) -> pd.DataFrame:
 
     Returns
     -------
-    results_df : DataFrame
+    results_df : pandas.DataFrame
         Dataframe containing the results for each source.
 
     Examples
@@ -108,7 +108,7 @@ def plot_retropath_results(
 
     Parameters
     ----------
-    results_df : DataFrame
+    results_df : pandas.DataFrame
         Dataframe containing the results for each source.
     config : dict
         The configuration dictionary.

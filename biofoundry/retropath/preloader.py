@@ -42,12 +42,12 @@ class RetroPathPreloader(BasePreloader):
         ----------
         model_dict : dict
             The model as a dictionary.
-        modelseed_reactions : DataFrame
+        modelseed_reactions : pandas.DataFrame
             ModelSEED reactions mapping model IDs (RXNs) to EC numbers.
 
         Returns
         -------
-        ec_numbers_df : DataFrame
+        ec_numbers_df : pandas.DataFrame
             Dataframe containing each all EC numbers found for the model.
 
         Examples
@@ -90,7 +90,7 @@ class RetroPathPreloader(BasePreloader):
 
         Returns
         -------
-        all_ec_numbers_df : DataFrame
+        all_ec_numbers_df : pandas.DataFrame
             Dataframe containing each all EC numbers found for the model.
 
         Examples
@@ -161,7 +161,7 @@ class RetroPathPreloader(BasePreloader):
 
         Returns
         -------
-        rules_df : DataFrame
+        rules_df : pandas.DataFrame
             Dataframe containing all rules found in the community.
 
         Examples
@@ -226,7 +226,7 @@ class RetroPathPreloader(BasePreloader):
 
         Returns
         -------
-        sink_df : DataFrame
+        sink_df : pandas.DataFrame
             Dataframe containing as the compounds found for the given rules.
 
         Examples
@@ -387,7 +387,7 @@ class RetroPathPreloader(BasePreloader):
 
         Returns
         -------
-        sources_df : DataFrame
+        sources_df : pandas.DataFrame
             Dataframe containing all the source compounds with their 
             corresponding InChI.
 

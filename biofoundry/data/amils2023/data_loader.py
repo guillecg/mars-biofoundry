@@ -28,7 +28,7 @@ class Amils2023DataLoader(BaseDataLoader):
 
         Returns
         -------
-        data_df_long : DataFrame
+        data_df_long : pandas.DataFrame
             Dataframe in long format containing the data.
 
         Examples
@@ -79,7 +79,7 @@ class Amils2023DataLoader(BaseDataLoader):
 
         Returns
         -------
-        data_df_long : DataFrame
+        data_df_long : pandas.DataFrame
             Dataframe in long format containing the data.
 
         Examples
@@ -148,7 +148,7 @@ class Amils2023DataLoader(BaseDataLoader):
 
         Returns
         -------
-        data_df_long : DataFrame
+        data_df_long : pandas.DataFrame
             Dataframe in long format containing the data.
 
         Examples
@@ -190,7 +190,7 @@ class Amils2023DataLoader(BaseDataLoader):
 
         Returns
         -------
-        data_df_long : DataFrame
+        data_df_long : pandas.DataFrame
             Dataframe in long format containing the data.
 
         Examples
@@ -261,7 +261,7 @@ class Amils2023DataLoader(BaseDataLoader):
 
         Returns
         -------
-        data_df_long : DataFrame
+        data_df_long : pandas.DataFrame
             Dataframe in long format containing the data.
 
         Examples
