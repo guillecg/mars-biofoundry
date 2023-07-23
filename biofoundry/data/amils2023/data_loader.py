@@ -11,7 +11,7 @@ class Amils2023DataLoader(BaseDataLoader):
 
     def __init__(
         self,
-        data_dir: str = "../data/papers/amils2023"
+        data_dir: str = "../data/papers/amils2023/"
     ) -> None:
         super().__init__()
 
@@ -337,3 +337,116 @@ class Amils2023DataLoader(BaseDataLoader):
         )
 
         return microbes_df
+
+    def get_abundances(self) -> pd.DataFrame:
+        """
+        Get the abundance data from Amils et al. 2023.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        abundances_df : pandas.DataFrame
+            Dataframe containing the microbial data from Amils et al. 2023.
+
+        Notes
+        -----
+        Abundances come from the two methods used in the paper: Illumin and
+        Roche 454.
+
+        Examples
+        --------
+        >>> from biofoundry.data.amils2023 import Amils2023DataLoader
+        >>> data_loader = Amils2023DataLoader()
+        >>> abundance_df = data_loader.get_abundance_data()
+
+        """
+
+        # Read 454 and Illumina abundances from supplementary materials
+        abundances_illumina_df = pd.read_excel(
+            os.path.join(
+                self.data_dir,
+                "emi16291-sup-0005-datasets4.xlsx"
+            ),
+            sheet_name="Filtered OTUs",
+            skiprows=11
+        )
+        abundances_roche_df = pd.read_excel(
+            os.path.join(
+                self.data_dir,
+                "emi16291-sup-0006-datasets5.xlsx"
+            ),
+            sheet_name="DW Filtered OTUs",
+            skiprows=11
+        )
+
+        # Filter out species also present in the drilling water (possible contamination)
+        # abundances_illumina_df = abundances_illumina_df[
+        #     (abundances_illumina_df["DW_RG"] == 0) & \
+        #     (abundances_illumina_df["IC"] == 0)
+        # ]
+        # abundances_roche_df = abundances_roche_df[
+        #     abundances_roche_df["DWδ"] == 0
+        # ]
+
+        # Group samples by genus to avoid repeats
+        abundances_illumina_df = abundances_illumina_df\
+            .groupby("Genus", as_index=False)\
+            .sum()
+        abundances_roche_df = abundances_roche_df\
+            .groupby("Genus", as_index=False)\
+            .sum()
+
+        # Get samples in long format for Illumina reads
+        abundances_illumina_df = pd.wide_to_long(
+            df=abundances_illumina_df,
+            stubnames="BH10",
+            i="Genus",
+            j="Sample",
+            sep="-",
+            suffix="\\d+"
+        )
+        abundances_illumina_df = abundances_illumina_df\
+            .reset_index()\
+            [["Genus", "Sample", "BH10"]]\
+            .rename(columns={
+                "BH10": "abundance",
+                "Genus": "genus",
+                "Sample": "sample_id"
+            })
+
+        abundances_illumina_df["sample_id"] = abundances_illumina_df["sample_id"]\
+            .apply(lambda row: f"BH10-{str(row)}-Illumina")\
+            .astype(str)
+
+        # Get samples in long format for Roche reads
+        abundances_roche_df = pd.wide_to_long(
+            df=abundances_roche_df,
+            stubnames="BH10",
+            i="Genus",
+            j="Sample",
+            sep="-",
+            suffix="\\d+"
+        )
+        abundances_roche_df = abundances_roche_df\
+            .reset_index()\
+            [["Genus", "Sample", "BH10"]]\
+            .rename(columns={
+                "BH10": "abundance",
+                "Genus": "genus",
+                "Sample": "sample_id"
+            })
+
+        abundances_roche_df["sample_id"] = abundances_roche_df["sample_id"]\
+            .apply(lambda row: f"BH10-{str(row)}-Roche")
+
+        # Concatenate
+        abundances_df = pd.concat(
+            [abundances_illumina_df, abundances_roche_df],
+            axis=0,
+            ignore_index=True
+        )
+
+        return abundances_df
