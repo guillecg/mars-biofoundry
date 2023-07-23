@@ -5,7 +5,7 @@
 ### 0. Create the environment and activate it
 
 ```{bash}
-conda create -n tfm python=3.10 -y
+conda create -n biofoundry python=3.10 -y
 ```
 
 ### 1. Install SciPy
@@ -61,7 +61,7 @@ python -m ipykernel install --user
 ### 0. Create the environment and activate it
 
 ```{bash}
-conda create -n tfm-micom python=3.10 -y
+conda create -n biofoundry-micom python=3.10 -y
 ```
 
 ### 1. Install dependencies
