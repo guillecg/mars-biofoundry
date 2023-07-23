@@ -66,6 +66,7 @@ python -m ipykernel install --user
 
 ```{bash}
 conda create -n biofoundry-micom python=3.10 -y
+conda activate biofoundry-micom
 ```
 
 ### 1. Install dependencies
@@ -90,8 +91,7 @@ pip install micom
 
 ### 3. Install other dependencies
 ```{bash}
-conda install openpyxl xlrd tabula-py plotly
-conda install -c conda-forge odfpy
+conda install -c conda-forge openpyxl xlrd tabula-py plotly odfpy -y
 ```
 
 ### 4. For working interactively with Python
