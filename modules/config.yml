@@ -2,6 +2,7 @@ paths:
   figures: "../data/figures/"
   genomes: "../data/genomes/"
   metanetx: "../data/metanetx/"
+  micom: "../data/micom/"
   models: "../data/gem/"
   modelseed: "../data/modelseed/"
   retropath: "../data/retropath/"
