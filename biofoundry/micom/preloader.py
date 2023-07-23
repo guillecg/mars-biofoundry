@@ -49,7 +49,7 @@ class MICOMPreloader(BaseMICOMPreloader):
 
         """
 
-        if type not in ("metabolites", "reactions"):
+        if element not in ("metabolites", "reactions"):
             raise NotImplementedError
 
         return len(model[element])
