@@ -41,18 +41,18 @@ conda update --all -y
 conda install -c conda-forge retropath2_wrapper -y
 ```
 
-### 4. For working interactively with Python
-
-```{bash}
-conda install jupyter ipykernel -y
-python -m ipykernel install --user
-```
-
-### 5. Install other dependencies
+### 4. Install other dependencies
 
 ```{bash}
 conda install -c conda-forge rdkit -y
 conda install -c conda-forge tabula-py -y
+```
+
+### 5. For working interactively with Python
+
+```{bash}
+conda install jupyter ipykernel -y
+python -m ipykernel install --user
 ```
 
 
