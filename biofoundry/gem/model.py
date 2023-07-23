@@ -244,34 +244,6 @@ class ModelBuilder(BaseModelBuilder):
                 model_text
         )
 
-    @staticmethod
-    def get_counts(model: dict, element: str) -> int:
-        """
-        Count metabolites and/or compartments in COBRA models.
-
-        Parameters
-        ----------
-        model : dict
-            The selected model as dictionary.
-        element : str
-            The selected element ("metabolites" or "reactions").
-
-        Returns
-        -------
-        _ : int
-            The number of elements found in the model.
-
-        Examples
-        --------
-        None
-
-        """
-
-        if type not in ("metabolites", "reactions"):
-            raise NotImplementedError
-
-        return len(model[element])
-
     def format_model(self, model_path: str) -> str:
         """
         Format model to fit COBRA conventions and better track compounds.

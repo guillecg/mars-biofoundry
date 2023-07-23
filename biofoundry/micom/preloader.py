@@ -26,6 +26,34 @@ class MICOMPreloader(BaseMICOMPreloader):
 
         self.config = config
 
+    @staticmethod
+    def get_counts(model: dict, element: str) -> int:
+        """
+        Count metabolites and/or compartments in COBRA models.
+
+        Parameters
+        ----------
+        model : dict
+            The selected model as dictionary.
+        element : str
+            The selected element ("metabolites" or "reactions").
+
+        Returns
+        -------
+        _ : int
+            The number of elements found in the model.
+
+        Examples
+        --------
+        None
+
+        """
+
+        if type not in ("metabolites", "reactions"):
+            raise NotImplementedError
+
+        return len(model[element])
+
     def get_taxonomy(self, metadata_df: pd.DataFrame) -> pd.DataFrame:
         """
         Get taxonomies from model paths.
