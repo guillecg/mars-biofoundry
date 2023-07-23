@@ -74,6 +74,8 @@ class MICOMPreloader(BaseMICOMPreloader):
 
         """
 
+        taxonomy = []
+
         for _, row in metadata_df.iterrows():
             species, organism = row[["Species", "Code"]].values
 
@@ -102,7 +104,7 @@ class MICOMPreloader(BaseMICOMPreloader):
                     "species": species,
                     "reactions": n_reactions,
                     "metabolites": n_metabolites,
-                    "file": model_path_new
+                    "file": model_path
                 }
             ]
 
