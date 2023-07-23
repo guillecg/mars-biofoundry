@@ -3,7 +3,6 @@ import os
 import pandas as pd
 
 import plotly
-import plotly.io as pio
 import plotly.express as px
 
 
@@ -103,7 +102,7 @@ def get_retropath_results(config: dict) -> pd.DataFrame:
 def plot_retropath_results(
     results_df: pd.DataFrame,
     config: dict
-) -> plotly.graph_objs._figure.Figure:
+) -> plotly.graph_objects.Figure:
     """
     Plot the results of the RetroPath2.0 analysis.
 
@@ -116,7 +115,7 @@ def plot_retropath_results(
 
     Returns
     -------
-    fig : Figure
+    fig : plotly.graph_objects.Figure
         The generated figure.
 
     Examples
@@ -140,14 +139,5 @@ def plot_retropath_results(
         template=config["figures"]["template"]
     )
     fig.update_layout(showlegend=False)
-
-    pio.write_image(
-        fig=fig,
-        file=os.path.join(
-            config["paths"]["figures"],
-            "retropath-metabolites.jpg"
-        ),
-        scale=6
-    )
 
     return fig
