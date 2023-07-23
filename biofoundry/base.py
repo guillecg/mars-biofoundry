@@ -8,7 +8,21 @@ class BaseDataLoader(ABC):
         raise NotImplementedError
 
 
-class BasePreloader(ABC):
+class BaseModelBuilder(ABC):
+
+    @abstractmethod
+    def build():
+        raise NotImplementedError
+
+
+class BaseModelValidator(ABC):
+
+    @abstractmethod
+    def validate():
+        raise NotImplementedError
+
+
+class BaseRetroPathPreloader(ABC):
 
     @abstractmethod
     def get_rules():
@@ -23,15 +37,8 @@ class BasePreloader(ABC):
         raise NotImplementedError
 
 
-class BaseModelBuilder(ABC):
+class BaseMICOMPreloader(ABC):
 
     @abstractmethod
-    def build():
-        raise NotImplementedError
-
-
-class BaseModelValidator(ABC):
-
-    @abstractmethod
-    def validate():
+    def get_taxonomy():
         raise NotImplementedError

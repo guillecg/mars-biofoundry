@@ -1,5 +1,4 @@
 import os
-
 import json
 
 import csv
@@ -7,10 +6,10 @@ import pandas as pd
 
 from rdkit import Chem
 
-from biofoundry.base import BasePreloader
+from biofoundry.base import BaseRetroPathPreloader
 
 
-class RetroPathPreloader(BasePreloader):
+class RetroPathPreloader(BaseRetroPathPreloader):
     """
     Auxiliary class for generating RetroPath2.0 inputs.
 
