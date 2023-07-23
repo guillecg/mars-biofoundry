@@ -26,7 +26,7 @@ pip install --no-use-pep517 scikit-learn"==0.23.2"
 pip install modelseedpy
 ```
 
-### 3. Install other dependencies
+### 3. Install RetroPath2-wrapper
 ```{bash}
 conda clean --all -y
 conda update --all -y
@@ -48,10 +48,11 @@ conda install jupyter ipykernel -y
 python -m ipykernel install --user
 ```
 
-### 5. Install RDKit
+### 5. Install other dependencies
 
 ```{bash}
 conda install -c conda-forge rdkit -y
+conda install -c conda-forge tabula-py -y
 ```
 
 
