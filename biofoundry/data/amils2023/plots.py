@@ -33,6 +33,7 @@ def plot_concentrations(
     >>> )
 
     """
+
     # Get sorted elements by their maximum concentration
     data_sorted = data_df_long\
         .groupby("Species")\
