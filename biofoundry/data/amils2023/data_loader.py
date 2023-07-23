@@ -252,8 +252,7 @@ class Amils2023DataLoader(BaseDataLoader):
 
     def get_data(self) -> pd.DataFrame:
         """
-        Get data from Table S7 - Occluded gases and natural activities at 
-        different depths (10/8/22).
+        Get from all previous sources combined.
 
         Parameters
         ----------
