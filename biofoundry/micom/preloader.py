@@ -55,7 +55,7 @@ class MICOMPreloader(BaseMICOMPreloader):
             )
 
             # Load model as dictionary and count reactions and metabolites
-            with open(model_path_new, "r") as fh:
+            with open(model_path, "r") as fh:
                 # See https://stackoverflow.com/questions/64268575/how-can-i-import-a-json-as-a-dict#comment113647180_64268609
                 model_dict, _ = json.load(fh)
 
