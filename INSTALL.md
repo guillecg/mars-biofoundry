@@ -53,7 +53,7 @@ conda install -c conda-forge rdkit tabula-py python-kaleido plotly -y
 ### 5. For working interactively with Python
 
 ```{bash}
-conda install jupyter ipykernel -y
+pip install jupyter ipykernel
 python -m ipykernel install --user
 ```
 
