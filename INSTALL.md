@@ -6,7 +6,7 @@
 
 ```{bash}
 conda clean --all -y
-conda create -n biofoundry python=3.9 -y
+conda create -n biofoundry python=3.10 -y
 conda activate biofoundry
 conda update --all -y
 ```
