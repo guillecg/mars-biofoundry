@@ -1,6 +1,8 @@
 import os
 import json
 
+import pandas as pd
+
 from biofoundry.base import BaseMICOMPreloader
 
 
