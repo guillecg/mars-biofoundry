@@ -7,7 +7,7 @@ import pandas as pd
 
 from rdkit import Chem
 
-from modules.base import BasePreloader
+from biofoundry.base import BasePreloader
 
 
 class RetroPathPreloader(BasePreloader):

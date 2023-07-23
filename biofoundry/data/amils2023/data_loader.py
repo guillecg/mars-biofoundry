@@ -4,7 +4,7 @@ import pandas as pd
 
 from tabula import read_pdf
 
-from modules.base import BaseDataLoader
+from biofoundry.base import BaseDataLoader
 
 
 class Amils2023DataLoader(BaseDataLoader):
