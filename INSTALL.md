@@ -47,7 +47,8 @@ conda install -c conda-forge retropath2_wrapper -y
 ### 4. Install other dependencies
 
 ```{bash}
-conda install -c conda-forge rdkit tabula-py python-kaleido plotly xlrd -y
+conda install -c conda-forge rdkit python-kaleido plotly -y
+conda install -c conda-forge tabula-py xlrd openpyxl -y
 pip install odfpy
 ```
 
