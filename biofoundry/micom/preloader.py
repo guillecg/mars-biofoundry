@@ -51,7 +51,7 @@ class MICOMPreloader(BaseMICOMPreloader):
 
             model_path = os.path.join(
                 self.config["paths"]["models"],
-                f"{organism}.json"
+                f"{organism}_formatted.json"
             )
 
             # Load model as dictionary and count reactions and metabolites
