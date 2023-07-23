@@ -5,9 +5,9 @@
 ### 0. Create the environment and activate it
 
 ```{bash}
-conda create -n biofoundry python=3.10 -y
-
 conda clean --all -y
+conda create -n biofoundry python=3.9 -y
+conda activate biofoundry
 conda update --all -y
 ```
 
