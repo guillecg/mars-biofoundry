@@ -21,3 +21,17 @@ class BasePreloader(ABC):
     @abstractmethod
     def get_sources():
         raise NotImplementedError
+
+
+class BaseModelBuilder(ABC):
+
+    @abstractmethod
+    def build():
+        raise NotImplementedError
+
+
+class BaseModelValidator(ABC):
+
+    @abstractmethod
+    def validate():
+        raise NotImplementedError
