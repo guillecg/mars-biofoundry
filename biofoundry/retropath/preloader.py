@@ -1,3 +1,5 @@
+from typing import Iterable
+
 import os
 import json
 
@@ -441,3 +443,120 @@ class RetroPathPreloader(BaseRetroPathPreloader):
             )
 
         return sources_df
+
+    def get_orgs_with_source_in_sink(
+        self,
+        source_ids: Iterable[str]
+    ) -> pd.DataFrame:
+        """
+        Get the organisms containing the source already in the sink.
+
+        Parameters
+        ----------
+        source_ids : Iterable[str]
+            The list of possible source's IDs (e.g. enantiomers have different
+            IDs).
+
+        Returns
+        -------
+        reactions_df : pandas.DataFrame
+            Dataframe containing the organism code and the found ID.
+
+        Examples
+        --------
+        None
+
+        """
+        
+        source_str = r"|".join(source_ids)
+
+        # Load EC numbers and rules in the community
+        ec_num_df = pd.read_csv(
+            os.path.join(
+                self.config["paths"]["retropath"],
+                self.config["retropath"]["files"]["ec_numbers"]
+            ),
+            sep=","
+        )
+        rules_df = pd.read_csv(
+            os.path.join(
+                self.config["paths"]["retropath"],
+                "rules.csv"
+            )
+        )
+
+        # Drop potential EC duplicates (more than one species with the same EC)
+        ec_num_df = ec_num_df.drop_duplicates()
+
+        # Avoid potential duplicates because of different rule usages and 
+        # diameters
+        rules_df = rules_df.drop(["Diameter", "Rule usage"], axis=1)
+
+        # Add organism to rules
+        rules_df = pd.merge(
+            left=rules_df,
+            right=ec_num_df,
+            left_on="EC number",
+            right_on="ec_numbers",
+            how="left"
+        )
+        rules_df = rules_df.rename(columns={"ID": "Organism"})
+
+        # Read MetaNetX reac_prop.tsv file
+        metanetx_reac_prop = pd.read_table(
+            os.path.join(
+                self.config["paths"]["metanetx"],
+                "reac_prop.tsv"
+            ),
+            comment="#", # Skip comment rows
+            header=None,
+            names=[
+                "ID",
+                "mnx_equation",
+                "reference",
+                "classifs",
+                "is_balanced",
+                "is_transport"
+            ]
+        )
+
+        # Get all MetaNetX reaction IDs
+        rules_df[["MNXR", "MNXM"]]  = rules_df["Rule ID"]\
+            .str.split("_", expand=True)
+
+        # Get all reaction information by MNXR
+        reactions_df = pd.merge(
+            left=metanetx_reac_prop,
+            right=rules_df,
+            left_on="ID",
+            right_on="MNXR",
+            how="outer",
+            indicator=True
+        )
+
+        # Remove "left_only" reactions (not present in the organism rules)
+        reactions_df = reactions_df[reactions_df["_merge"] != "left_only"]
+
+        # Get all reactions that could not be mapped in METANETX
+        not_in_metanetx = reactions_df[reactions_df["_merge"] == "right_only"]
+        print(
+            "[WARNING] #reactions not present in METANETX: ",
+            len(not_in_metanetx), "/", len(reactions_df)
+        )
+
+        # Finally, get reactions in the organism that could be mapped to METANETX
+        reactions_df = reactions_df[reactions_df["_merge"] == "both"]
+        reactions_df["Source match"] = reactions_df["mnx_equation"]\
+            .str.findall(source_str)\
+            .apply(",".join)
+
+        # Get only matches
+        reactions_df = reactions_df[
+            reactions_df["Source match"] != ""
+        ]
+
+        # TODO: check why duplicates appear
+        reactions_df = reactions_df[["Organism", "Source match"]]\
+            .drop_duplicates()
+
+        return reactions_df
