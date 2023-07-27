@@ -391,6 +391,22 @@ class Amils2023DataLoader(BaseDataLoader):
         #     abundances_roche_df["DWδ"] == 0
         # ]
 
+        # Get only required columns (genus and BH10 samples)
+        bh_cols_illumina = abundances_illumina_df\
+            .filter(regex=r"BH10-\d+")\
+            .columns\
+            .tolist()
+        abundances_illumina_df = abundances_illumina_df[
+            ["Genus"] + bh_cols_illumina
+        ].copy()
+        bh_cols_roche = abundances_roche_df\
+            .filter(regex=r"BH10-\d+")\
+            .columns\
+            .tolist()
+        abundances_roche_df = abundances_roche_df[
+            ["Genus"] + bh_cols_roche
+        ].copy()
+
         # Group samples by genus to avoid repeats
         abundances_illumina_df = abundances_illumina_df\
             .groupby("Genus", as_index=False)\
