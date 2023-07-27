@@ -1,3 +1,8 @@
+# Ignore openpyxl warnings: https://stackoverflow.com/a/75025242
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="openpyxl")
+
+
 import os
 
 import pandas as pd
