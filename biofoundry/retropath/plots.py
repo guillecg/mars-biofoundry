@@ -125,17 +125,18 @@ def plot_retropath_results(
     """
 
     status_counts = results_df["Status"]\
-        .value_counts()\
+        .value_counts(normalize=True)\
+        .apply(lambda row: 100 * row)\
         .reset_index(drop=False)\
-        .rename(columns={"Status": "Counts", "index": "Status"})
+        .rename(columns={"Status": "% Counts", "index": "Status"})
 
     fig = px.bar(
         data_frame=status_counts,
         x="Status",
-        y="Counts",
+        y="% Counts",
         color="Status",
         color_discrete_sequence=px.colors.qualitative.Pastel,
-        text_auto=True,
+        text=[f"{i} %" for i in status_counts["% Counts"].round(2)],
         template=config["figures"]["template"]
     )
     fig.update_layout(showlegend=False)
