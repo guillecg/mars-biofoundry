@@ -9,12 +9,17 @@ import plotly
 import plotly.express as px
 
 
-def plot_metabolic_models(config: dict) -> plotly.graph_objects.Figure:
+def plot_metabolic_models(
+    metadata_df: pd.DataFrame,
+    config: dict
+) -> plotly.graph_objects.Figure:
     """
     Plot the number of genes, reactions and metabolites per model.
 
     Parameters
     ----------
+    metadata_df : pandas.DataFrame
+        Metadata dataframe with all paths to the annotated genomes.
     config : dict
         The configuration dictionary.
 
@@ -42,7 +47,7 @@ def plot_metabolic_models(config: dict) -> plotly.graph_objects.Figure:
 
             model_df = pd.Series({
                 "Organism": model_dict["id"],
-                "Genes": len(model_dict["genes"]),
+                "Genes (model)": len(model_dict["genes"]),
                 "Reactions": len(model_dict["reactions"]),
                 "Metabolites": len(model_dict["metabolites"])
             })
@@ -54,12 +59,25 @@ def plot_metabolic_models(config: dict) -> plotly.graph_objects.Figure:
                 ignore_index=True
             )
 
+    # Add gene counts from annotated genome
+    metadata_df = metadata_df.rename(columns={
+        "Code": "Organism",
+        "Gene count": "Genes (annotation)"
+    })
+    plot_df = pd.merge(
+        left=plot_df,
+        right=metadata_df[["Organism", "Genes (annotation)"]],
+        on="Organism",
+        how="left"
+    )
+
     # Convert to long format for Plotly
     plot_df_long = pd.melt(
         frame=plot_df,
         id_vars=["Organism"],
         value_vars=[
-            "Genes",
+            "Genes (annotation)",
+            "Genes (model)",
             "Reactions",
             "Metabolites"
         ],
@@ -78,7 +96,12 @@ def plot_metabolic_models(config: dict) -> plotly.graph_objects.Figure:
         color="Element",
         barmode="group",
         category_orders={
-            "Element": ["Genes", "Reactions", "Metabolites"]
+            "Element": [
+                "Genes (annotation)",
+                "Genes (model)",
+                "Reactions",
+                "Metabolites"
+            ]
         },
         color_discrete_sequence=px.colors.qualitative.Pastel,
         template=config["figures"]["template"],
