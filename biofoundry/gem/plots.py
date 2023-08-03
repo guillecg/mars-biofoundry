@@ -104,8 +104,7 @@ def plot_metabolic_models(
             ]
         },
         color_discrete_sequence=px.colors.qualitative.Pastel,
-        template=config["figures"]["template"],
-        title="Distribution of metabolic model elements across species"
+        template=config["figures"]["template"]
     )
 
     return fig
