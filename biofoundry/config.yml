@@ -6,6 +6,7 @@ paths:
   models: "../data/gem/"
   modelseed: "../data/modelseed/"
   retropath: "../data/retropath/"
+  retropath_classes: "../data/retropath_classes/"
   retrorules: "../data/retrorules/retrorules_rr01_rp2_flat_forward.csv"
 
 retropath:

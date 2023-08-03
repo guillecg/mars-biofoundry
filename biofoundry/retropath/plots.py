@@ -142,3 +142,188 @@ def plot_retropath_results(
     fig.update_layout(showlegend=False)
 
     return fig
+
+
+def get_classes_counts(
+    results_df: pd.DataFrame,
+    config: dict
+) -> pd.DataFrame:
+    """
+    Get the compound classes to further analyse RetroPath results.
+
+    Parameters
+    ----------
+    results_df : pandas.DataFrame
+        Dataframe containing the results for each source obtained with function
+        get_retropath_results.
+    config : dict
+        The configuration dictionary.
+
+    Returns
+    -------
+    _ : pandas.DataFrame
+        Dataframe containing the counts per status and class.
+
+    Examples
+    --------
+    None
+
+    """
+
+    # Load compound SMILES and names
+    detectable_df = pd.read_excel(
+        os.path.join(
+            config["paths"]["retropath_classes"],
+            "Detectables_list.xlsx"
+        ),
+        header=None,
+        names=["ID", "SMILES"] + list(range(11)) + ["Source"]
+    )
+    producible_df = pd.read_excel(
+        os.path.join(
+            config["paths"]["retropath_classes"],
+            "Producibles_list.xlsx"
+        ),
+        header=None,
+        names=["ID", "SMILES"] + list(range(7)) + ["Source"]
+    )
+
+    # Drop separator columns
+    detectable_df = detectable_df.dropna(how="all", axis=1)
+    producible_df = producible_df.dropna(how="all", axis=1)
+
+    smiles_df = pd.concat(
+        [detectable_df, producible_df],
+        axis=0,
+        ignore_index=True
+    )
+
+    # Load compound classes
+    class_df = pd.concat(
+        [
+            pd.read_table(
+                os.path.join(
+                    config["paths"]["retropath_classes"],
+                    "AnotacionDetectables.txt"
+                ),
+                names=["Index", "ID", "Class"]
+            ),
+            pd.read_table(
+                os.path.join(
+                    config["paths"]["retropath_classes"],
+                    "AnotacionDetectablesEnvipath.txt"
+                ),
+                names=["Index", "ID", "Class"]
+            ),
+            pd.read_table(
+                os.path.join(
+                    config["paths"]["retropath_classes"],
+                    "AnotacionProducibles.txt"
+                ),
+                names=["Index", "ID", "Class"]
+            ),
+            pd.read_table(
+                os.path.join(
+                    config["paths"]["retropath_classes"],
+                    "AnotacionProduciblesEnvipath.txt"
+                ),
+                names=["Index", "ID", "Class"]
+            )
+        ],
+        axis=0,
+        ignore_index=True
+    )
+
+    # Drop potential duplicates
+    smiles_df = smiles_df.drop_duplicates()
+    class_df = class_df.drop_duplicates()
+
+    merged_df = pd.merge(
+        left=smiles_df,
+        right=class_df,
+        on="ID",
+        how="left"
+    )
+    merged_df = merged_df[["Source", "Class"]]
+
+    # Lower case to match the other dataframe
+    merged_df["Source"] = merged_df["Source"].str.lower()
+    results_df["Source"] = results_df["Source"].str.lower()
+
+    results_class_df = pd.merge(
+        left=results_df,
+        right=merged_df,
+        on="Source",
+        how="left"
+    )
+
+    return results_class_df\
+        .groupby(["Status", "Class"], as_index=False)\
+        .count()\
+        .rename(columns={"Source": "Counts"})\
+        .sort_values("Counts", ascending=False)
+
+
+def plot_classes_counts(
+    counts_df: pd.DataFrame,
+    config: dict,
+    status: str = "Scope",
+    counts_thr: int = 2
+) -> plotly.graph_objects.Figure:
+    """
+    Plot the counts per class.
+
+    Parameters
+    ----------
+    counts_df : pandas.DataFrame
+        Dataframe containing the counts per status and class obtained with
+        function get_classes_counts.
+    config : dict
+        The configuration dictionary.
+    status : str
+        The status to be plotted. Must be in counts_df["Status"]
+    counts_thr: int
+        Thresholt to avoid plotting too many points.
+
+    Returns
+    -------
+    fig : plotly.graph_objects.Figure
+        The generated figure.
+
+    Examples
+    --------
+    None
+
+    """
+
+    fig = px.bar(
+        data_frame=counts_df[
+            (counts_df["Counts"] >= counts_thr) &
+            (counts_df["Status"] == status)
+        ],
+        x="Class",
+        y="Counts",
+        color="Class",
+        category_orders={
+            "Status": [
+                "Results but no scope",
+                "Source in sink",
+                "Source in sink (empty)",
+                "Error",
+                "Scope"
+            ]
+        },
+        color_discrete_sequence=px.colors.qualitative.Pastel,
+        template=config["figures"]["template"],
+        height=600,
+        width=900
+    )
+    fig.update_layout(
+        showlegend=False,
+        xaxis=dict(
+            tickangle=45,
+            tickfont=dict(size=11)
+        )
+    )
+
+    return fig
