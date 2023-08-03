@@ -410,7 +410,12 @@ class RetroPathPreloader(BaseRetroPathPreloader):
         sources_df["InChI"] = \
             sources_df["Smile"]\
             .dropna(how="all")\
-            .apply(lambda row: Chem.MolToInchi(Chem.MolFromSmiles(row)))
+            .apply(
+                lambda row: Chem.MolToInchi(
+                    Chem.MolFromSmiles(row),
+                    options="-SNon"
+                )
+            )
 
         # TODO: log compounds with missing InChI
 
