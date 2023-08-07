@@ -56,8 +56,7 @@ def plot_abundances_depth(
             color="log(Abundance)"
         ),
         aspect="auto",
-        template=config["figures"]["template"],
-        title="Distribution of microbial functions across the vertical column"
+        template=config["figures"]["template"]
     )
 
     return fig

@@ -124,8 +124,7 @@ def plot_microbial_data(
             color="Count"
         ),
         aspect="equal",
-        template=config["figures"]["template"],
-        title="Distribution of microbial functions across the vertical column"
+        template=config["figures"]["template"]
     )
 
     return fig
