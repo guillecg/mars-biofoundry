@@ -60,3 +60,46 @@ def plot_abundances_depth(
     )
 
     return fig
+
+
+def plot_minimal_medium(
+    min_medium: pd.DataFrame,
+    top_n: dict,
+    config: dict
+) -> plotly.graph_objects.Figure:
+    """
+    Plot the computed minimal medium.
+
+    Parameters
+    ----------
+    min_medium : pandas.DataFrame
+        Minimal medium computed for a given community.
+    top_n : int
+        Top fluxes to show.
+    config : dict
+        The configuration dictionary.
+
+    Returns
+    -------
+    fig : plotly.graph_objects.Figure
+        The generated figure.
+
+    Examples
+    --------
+    None
+
+    """
+
+    fig = px.bar(
+        data_frame=min_medium\
+            .sort_values("flux", ascending=False)\
+            .head(top_n)\
+            .rename(columns={"reaction": "Reaction", "flux": "Flux"}),
+        x="Reaction",
+        y="Flux",
+        color="Flux",
+        template=config["figures"]["template"]
+    )
+    fig.update_coloraxes(showscale=False)
+
+    return fig
