@@ -47,5 +47,5 @@ class BaseMICOMPreloader(ABC):
 class BaseMICOMMediumManager(ABC):
 
     @abstractmethod
-    def get_min_media():
+    def get_min_medium():
         raise NotImplementedError
