@@ -49,3 +49,6 @@ class BaseMICOMMediumManager(ABC):
     @abstractmethod
     def get_min_medium():
         raise NotImplementedError
+
+    def extrapolate_medium():
+        raise NotImplementedError
