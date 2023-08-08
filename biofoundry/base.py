@@ -42,3 +42,10 @@ class BaseMICOMPreloader(ABC):
     @abstractmethod
     def get_taxonomy():
         raise NotImplementedError
+
+
+class BaseMICOMMediumManager(ABC):
+
+    @abstractmethod
+    def get_min_media():
+        raise NotImplementedError
