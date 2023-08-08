@@ -30,6 +30,7 @@ pip install modelseedpy
 ```
 
 ### 3. Install RetroPath2-wrapper
+
 ```{bash}
 conda clean --all -y
 conda update --all -y
@@ -85,14 +86,22 @@ export CXX=g++
 ```
 
 ### 2. Install MICOM
+
 ```{bash}
 pip install micom
 ```
 
 ### 3. Install other dependencies
+
 ```{bash}
-conda install -c conda-forge openpyxl xlrd tabula-py odfpy -y
-conda install -c conda-forge plotly python-kaleido -y
+conda install -c conda-forge python-kaleido plotly -y
+conda install -c conda-forge tabula-py xlrd openpyxl -y
+pip install odfpy
+```
+
+Fix Java not found:
+```{bash}
+conda install -c conda-forge openjdk=17.0.3 -y
 ```
 
 ### 4. For working interactively with Python
