@@ -87,11 +87,13 @@ def plot_metabolic_models(
     )
 
     # Sort by ID
-    plot_df_long = plot_df_long.sort_values("Organism")
+    plot_df_long = plot_df_long\
+        .sort_values("Organism")\
+        .rename(columns={"Organism": "Species"})
 
     fig = px.bar(
         data_frame=plot_df_long,
-        x="Organism",
+        x="Species",
         y="Counts",
         color="Element",
         barmode="group",
