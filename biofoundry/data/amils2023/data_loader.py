@@ -323,6 +323,87 @@ class Amils2023DataLoader(BaseDataLoader):
         # Rename pathway column
         microbes_df = microbes_df.rename(columns={"Pathway/depth": "Pathway"})
 
+        # Fix super- and subscripts
+        microbes_df["Pathway"] = microbes_df["Pathway"]\
+            .str.replace(
+                "comp denitr",
+                "Complete denitrification"
+            )\
+            .str.replace(
+                "N2 fix",
+                r"$N_{2} \; fix$",
+                regex=True
+            )\
+            .str.replace(
+                "SO32- → S2-",
+                r"$SO_{3}^{2-} \\xrightarrow{} S^{2-}$",
+                regex=True
+            )\
+            .str.replace(
+                "S4O62- →  S2O32-",
+                r"$S_{4}O_{6}^{2-} \\xrightarrow{} S_{2}O_{3}^{2-}$",
+                regex=True
+            )\
+            .str.replace(
+                "S2O32-→ S2-",
+                r"$S_{2}O_{3}^{2-} \\xrightarrow{} S^{2-}$",
+                regex=True
+            )\
+            .str.replace(
+                "S2 → pS",
+                r"$S^{2-} \\xrightarrow{} pS$",
+                regex=True
+            )\
+            .str.replace(
+                "S2O32- → S4O62-",
+                r"$S_{2}O_{3}^{2-} \\xrightarrow{} S_{4}O_{6}^{2-}$",
+                regex=True
+            )\
+            .str.replace(
+                "S2O32- → SO42-",
+                r"$S_{2}O_{3}^{2-} \\xrightarrow{} SO_{4}^{2-}$",
+                regex=True
+            )\
+            .str.replace(
+                "H2 ox",
+                r"$H_{2} \; oxidation$",
+                regex=True
+            )\
+            .str.replace(
+                "Fe3\+ →  Fe2\+",
+                r"$Fe^{3+} \\xrightarrow{} Fe^{2+}$",
+                regex=True
+            )\
+            .str.replace(
+                "TCA CO2",
+                r"$TCA \; CO_{2}$",
+                regex=True
+            )\
+            .str.replace(
+                "fm CO2",
+                r"$fm \; CO_{2}$",
+                regex=True
+            )\
+            .str.replace(
+                "fm H2",
+                r"$fm \; H_{2}$",
+                regex=True
+            )\
+            .str.replace(
+                "CO2fix",
+                r"$CO_{2} \; fix$",
+                regex=True
+            )\
+            .str.replace(
+                "CO → CO2",
+                r"$CO \\xrightarrow{} CO_{2}$",
+                regex=True
+            )\
+            .str.replace(
+                "nº compl cyc",
+                "Nº complete cycles"
+            )
+
         # Drop last row containing the explanation
         microbes_df = microbes_df.iloc[:-1, :].copy()
 
