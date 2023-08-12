@@ -1,3 +1,6 @@
+import os
+import glob
+
 import numpy as np
 import pandas as pd
 
@@ -101,5 +104,163 @@ def plot_minimal_medium(
         template=config["figures"]["template"]
     )
     fig.update_coloraxes(showscale=False)
+
+    return fig
+
+
+def get_growth_data(config: dict) -> pd.DataFrame:
+    """
+    Plot the computed minimal medium.
+
+    Parameters
+    ----------
+    config : dict
+        The configuration dictionary.
+
+    Returns
+    -------
+    growth_df : pandas.DataFrame
+        The growth data from the experiments.
+
+    Examples
+    --------
+    None
+
+    """
+
+    output_dir = os.path.join(
+        config["paths"]["micom"],
+        "amils2023"
+    )
+
+    glob_pattern = os.path.join(
+        output_dir,
+        "equal_abundances/*.csv"
+    )
+
+    growth_df = pd.DataFrame()
+
+    for filename in glob.glob(glob_pattern):
+
+        file_df = pd.read_csv(filename)
+        file_df["Experiment"] = os.path.splitext(os.path.basename(filename))[0]
+
+        growth_df = pd.concat(
+            [growth_df, file_df],
+            axis=0,
+            ignore_index=True
+        )
+
+    # Fix names for plotting
+    growth_df = growth_df.rename(columns={
+        "compartments": "Species",
+        "growth_rate": "Growth rate",
+        "community_growth_rate": "Community growth rate"
+    })
+    growth_df["Experiment"] = growth_df["Experiment"]\
+        .str.replace("_", " ")\
+        .str.replace(" aerobic", " (aerobic)",)\
+        .str.replace("anaerobic", "(anaerobic)")\
+        .str.capitalize()
+
+    return growth_df
+
+
+def plot_species_growth(
+    growth_df: pd.DataFrame,
+    config: dict
+) -> plotly.graph_objects.Figure:
+    """
+    Plot the computed minimal medium.
+
+    Parameters
+    ----------
+    growth_df : pandas.DataFrame
+        The growth data from the experiments.
+    config : dict
+        The configuration dictionary.
+
+    Returns
+    -------
+    fig : plotly.graph_objects.Figure
+        The generated figure.
+
+    Examples
+    --------
+    None
+
+    """
+
+    fig = px.bar(
+        data_frame=growth_df,
+        x="Species",
+        y="Growth rate",
+        color="Experiment",
+        barmode="group",
+        category_orders={
+            "Experiment": [
+                "Growth (aerobic)",
+                "Growth (anaerobic)",
+                "Production",
+                "Growth and production (aerobic)",
+                "Growth and production (anaerobic)"
+            ]
+        },
+        color_discrete_sequence=px.colors.qualitative.Pastel,
+        template=config["figures"]["template"],
+        width=900
+    )
+
+    return fig
+
+
+def plot_community_growth(
+    growth_df: pd.DataFrame,
+    config: dict
+) -> plotly.graph_objects.Figure:
+    """
+    Plot the computed minimal medium.
+
+    Parameters
+    ----------
+    growth_df : pandas.DataFrame
+        The growth data from the experiments.
+    config : dict
+        The configuration dictionary.
+
+    Returns
+    -------
+    fig : plotly.graph_objects.Figure
+        The generated figure.
+
+    Examples
+    --------
+    None
+
+    """
+
+    community_plot_df = growth_df[["Experiment", "Community growth rate"]]\
+        .drop_duplicates()
+
+    fig = px.bar(
+        data_frame=community_plot_df,
+        x="Experiment",
+        y="Community growth rate",
+        color="Experiment",
+        text=community_plot_df["Community growth rate"].round(2),
+        category_orders={
+            "Experiment": [
+                "Growth (aerobic)",
+                "Growth (anaerobic)",
+                "Production",
+                "Growth and production (aerobic)",
+                "Growth and production (anaerobic)"
+            ]
+        },
+        color_discrete_sequence=px.colors.qualitative.Pastel,
+        template=config["figures"]["template"],
+        width=900
+    )
+    fig.update_layout(showlegend=False)
 
     return fig
