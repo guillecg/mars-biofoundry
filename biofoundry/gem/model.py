@@ -151,8 +151,11 @@ class ModelBuilder(BaseModelBuilder):
             model_id=os.path.basename(genome_path),
             genome=genome,
             gapfill_media=None,
+            template=None,
+            index="0",
             allow_all_non_grp_reactions=True,
-            annotate_with_rast=True
+            annotate_with_rast=True,
+            gapfill_model=True
         )
 
         return model
