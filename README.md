@@ -29,7 +29,7 @@ Please, refer to the [installation manual](INSTALL.md).
 ## Data
 
 The pipeline uses many data sources with their respective licenses.
-A detailed guide on how to download and organise them is provided in the [data readme](DATA.md).
+A detailed guide on how to download and organise them is provided in the [data readme](data/README.md).
 
 
 ## Future work
