@@ -1,9 +1,23 @@
+import logging
+
 import os
 import json
 
 import pandas as pd
 
 from biofoundry.base import BaseMICOMPreloader
+
+
+# Configure logging
+logging.basicConfig(
+    filename=os.path.basename(__file__).replace(".py", ".log"),
+    filemode="w",
+    format="%(asctime)s - %(filename)s:%(lineno)s - %(funcName)s - " + \
+        "%(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=logging.INFO
+)
+LOGGER = logging.getLogger(__name__)
 
 
 class MICOMPreloader(BaseMICOMPreloader):
@@ -79,6 +93,8 @@ class MICOMPreloader(BaseMICOMPreloader):
         for _, row in metadata_df.iterrows():
             species, organism = row[["Species", "Code"]].values
 
+            LOGGER.info(f"Starting with organism {organism}")
+
             model_path = os.path.join(
                 self.config["paths"]["models"],
                 f"{organism}_formatted.json"
@@ -96,6 +112,9 @@ class MICOMPreloader(BaseMICOMPreloader):
                     model=model_dict,
                     element="metabolites"
                 )
+
+                LOGGER.debug(f"Number of reactions: {n_reactions}")
+                LOGGER.debug(f"Number of metabolites: {n_metabolites}")
 
             taxonomy += [
                 {
