@@ -10,14 +10,14 @@ from biofoundry.base import BaseMICOMPreloader
 
 # Configure logging
 logging.basicConfig(
-    filename=os.path.basename(__file__).replace(".py", ".log"),
+    filename="micom-" + os.path.basename(__file__).replace(".py", ".log"),
     filemode="w",
     format="%(asctime)s - %(filename)s:%(lineno)s - %(funcName)s - " + \
         "%(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
     level=logging.INFO
 )
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("micom-" + __name__)
 
 
 class MICOMPreloader(BaseMICOMPreloader):

@@ -15,14 +15,14 @@ from biofoundry.base import BaseRetroPathPreloader
 
 # Configure logging
 logging.basicConfig(
-    filename=os.path.basename(__file__).replace(".py", ".log"),
+    filename="retropath-" + os.path.basename(__file__).replace(".py", ".log"),
     filemode="w",
     format="%(asctime)s - %(filename)s:%(lineno)s - %(funcName)s - " + \
         "%(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
     level=logging.DEBUG
 )
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("retropath-" + __name__)
 
 
 class RetroPathPreloader(BaseRetroPathPreloader):
