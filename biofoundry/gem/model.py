@@ -17,17 +17,16 @@ from cobra.io import load_json_model, save_json_model
 from biofoundry.base import BaseModelBuilder, BaseModelValidator
 
 
-FILE = os.path.basename(__file__).replace(".py", "")
-
 # Configure logging
 logging.basicConfig(
-    filename=f"{FILE}.log",
+    filename=os.path.basename(__file__).replace(".py", ".log"),
     filemode="w",
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    format="%(asctime)s - %(filename)s:%(lineno)s - %(funcName)s - " + \
+        "%(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
     level=logging.INFO
 )
-LOGGER = logging.getLogger(FILE)
+LOGGER = logging.getLogger(__name__)
 
 
 class ModelValidator(BaseModelValidator):
@@ -63,6 +62,7 @@ class ModelValidator(BaseModelValidator):
         None
 
         """
+
         try:
             load_json_model(model_path)
             LOGGER.info(f"Correctly loaded {model_path}")
@@ -89,6 +89,8 @@ class ModelValidator(BaseModelValidator):
         None
 
         """
+
+        LOGGER.info(f"Validating model {model_path}")
         self.validate_loading(model_path)
 
 
@@ -136,14 +138,13 @@ class ModelBuilder(BaseModelBuilder):
 
         """
 
-        LOGGER.info(f"Starting with genome")
-
         # Load annotated genome
         genome = MSGenome.from_fasta(
             genome_path,
             split=" "
         )
 
+        LOGGER.info(f"Genome created from {genome_path}")
         LOGGER.info(f"Number of features: {len(genome.features)}")
 
         # Build metabolic model from annotated genome
@@ -157,6 +158,8 @@ class ModelBuilder(BaseModelBuilder):
             annotate_with_rast=True,
             gapfill_model=True
         )
+
+        LOGGER.info("Model successfully built")
 
         return model
 
@@ -267,6 +270,8 @@ class ModelBuilder(BaseModelBuilder):
 
         """
 
+        LOGGER.info(f"Formatting model {model_path}")
+
         # Create new path for the formatted model
         model_path_new = model_path\
             .replace(".json", "_formatted.json")
@@ -274,8 +279,15 @@ class ModelBuilder(BaseModelBuilder):
         # Load model as text and rename compartments and metabolites
         with open(model_path, "r") as fh:
             model_text = fh.read()
+            LOGGER.debug(f"Model string length: {len(model_text)}")
+
+            LOGGER.info("Renaming compartments...")
             model_text = self.rename_compartments(model_text)
+            LOGGER.debug(f"Compartments renamed: {len(model_text)}")
+
+            LOGGER.info("Renaming metabolites...")
             model_text = self.rename_metabolites(model_text)
+            LOGGER.debug(f"Metabolites renamed: {len(model_text)}")
 
         # Dump formatted model
         with open(model_path_new, "w") as fh:
@@ -285,6 +297,8 @@ class ModelBuilder(BaseModelBuilder):
                 indent=4,
                 sort_keys=False
             )
+
+        LOGGER.info(f"Saved formatted model to {model_path_new}")
 
         return model_path_new
 
@@ -308,8 +322,13 @@ class ModelBuilder(BaseModelBuilder):
 
         """
 
+        LOGGER.info("Building models from:")
+        LOGGER.debug("\t" + metadata_df.to_string().replace("\n", "\n\t"))
+
         for _, row in metadata_df.iterrows():
             organism = row["Code"]
+
+            LOGGER.info(f"Starting with organism {organism}")
 
             # Build model
             genome_path = os.path.join(
