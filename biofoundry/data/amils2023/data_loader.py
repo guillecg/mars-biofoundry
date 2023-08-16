@@ -1,7 +1,8 @@
+import logging
+
 # Ignore openpyxl warnings: https://stackoverflow.com/a/75025242
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="openpyxl")
-
 
 import os
 
@@ -10,6 +11,18 @@ import pandas as pd
 from tabula import read_pdf
 
 from biofoundry.base import BaseDataLoader
+
+
+# Configure logging
+logging.basicConfig(
+    filename=os.path.basename(__file__).replace(".py", ".log"),
+    filemode="w",
+    format="%(asctime)s - %(filename)s:%(lineno)s - %(funcName)s - " + \
+        "%(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=logging.INFO
+)
+LOGGER = logging.getLogger(__name__)
 
 
 class Amils2023DataLoader(BaseDataLoader):
@@ -50,8 +63,12 @@ class Amils2023DataLoader(BaseDataLoader):
             pages=1
         )
 
+        LOGGER.info("Loaded emi16291-sup-0003-datasets2.pdf")
+
         # Extract the only dataframe since there's only one page
         data_df = data_df[0]
+
+        LOGGER.info(f"Number of entries (wide): {data_df.shape}")
 
         # Convert to long for plotting
         data_df_long = pd.melt(
@@ -70,6 +87,8 @@ class Amils2023DataLoader(BaseDataLoader):
             data_df_long[["Depth", "Concentration (ppm)"]]\
             .apply(lambda row: row.str.replace(",", "."))\
             .astype(float)
+
+        LOGGER.info(f"Number of entries (long): {data_df_long.shape}")
 
         return data_df_long
 
@@ -102,9 +121,13 @@ class Amils2023DataLoader(BaseDataLoader):
             skiprows=1
         )
 
+        LOGGER.info("Loaded emi16291-sup-0004-datasets3.xls")
+        LOGGER.info(f"Number of entries (wide): {data_df.shape}")
+
         # Drop W90 sample to avoid duplicates
         data_df = data_df[data_df["SAMPLE"] != "BH10_W90"]\
             .reset_index(drop=True)
+        LOGGER.debug(f"Dropped W90 sample: {data_df.shape}")
 
         # Create depth column
         data_df["Depth"] = data_df["SAMPLE"]\
@@ -141,6 +164,8 @@ class Amils2023DataLoader(BaseDataLoader):
         data_df_long["Species"] = data_df_long["Species"]\
             .str.replace("Ph(?!\w+)", "pH", regex=True)
 
+        LOGGER.info(f"Number of entries (long): {data_df_long.shape}")
+
         return data_df_long
 
     def get_cations(self) -> pd.DataFrame:
@@ -171,6 +196,9 @@ class Amils2023DataLoader(BaseDataLoader):
             skiprows=1
         )
 
+        LOGGER.info("Loaded emi16291-sup-0001-supinfo-tables1.ods")
+        LOGGER.info(f"Number of entries (wide): {data_df.shape}")
+
         data_df_long = pd.melt(
             data_df,
             id_vars=["Depth"],
@@ -181,6 +209,8 @@ class Amils2023DataLoader(BaseDataLoader):
             var_name="Species",
             value_name="Concentration (ppm)"
         )
+
+        LOGGER.info(f"Number of entries (long): {data_df_long.shape}")
 
         return data_df_long
 
@@ -213,11 +243,16 @@ class Amils2023DataLoader(BaseDataLoader):
             skiprows=1
         )
 
+        LOGGER.info("Loaded emi16291-sup-0001-supinfo-tables7.ods")
+        LOGGER.info(f"Number of entries (wide): {data_df.shape}")
+
         # Drop last row containing the explanation
         data_df = data_df.iloc[:-1, :].copy()
+        LOGGER.debug(f"Dropped last row: {data_df.shape}")
 
         # Drop last three columns since they correspond to activate metabolism
         data_df = data_df.iloc[:, :-3].copy()
+        LOGGER.debug(f"Dropped last three columns: {data_df.shape}")
 
         # Rename depth column
         data_df = data_df.rename(columns={"Depth mbs": "Depth"})
@@ -253,6 +288,8 @@ class Amils2023DataLoader(BaseDataLoader):
             value_name="Concentration (ppm)"
         )
 
+        LOGGER.info(f"Number of entries (long): {data_df_long.shape}")
+
         return data_df_long
 
     def get_data(self) -> pd.DataFrame:
@@ -285,6 +322,8 @@ class Amils2023DataLoader(BaseDataLoader):
             axis=0,
             ignore_index=True
         )
+
+        LOGGER.info(f"Number of entries (long): {data_df_long.shape}")
 
         # Round to fit Illumina and Roche datasets (Datasets S4 and S5)
         data_df_long["Depth"] = data_df_long["Depth"].astype(int)
@@ -319,6 +358,9 @@ class Amils2023DataLoader(BaseDataLoader):
             ),
             sheet_name="Sheet1"
         )
+
+        LOGGER.info("Loaded emi16291-sup-0001-supinfo-tables8-2.ods")
+        LOGGER.info(f"Number of entries (wide): {microbes_df.shape}")
 
         # Rename pathway column
         microbes_df = microbes_df.rename(columns={"Pathway/depth": "Pathway"})
@@ -404,13 +446,18 @@ class Amils2023DataLoader(BaseDataLoader):
                 "Nº complete cycles"
             )
 
+        LOGGER.debug("Formatted super- and subscripts:")
+        LOGGER.debug("\t" + microbes_df.to_string().replace("\n", "\n\t"))
+
         # Drop last row containing the explanation
         microbes_df = microbes_df.iloc[:-1, :].copy()
+        LOGGER.debug(f"Dropped last row: {microbes_df.shape}")
 
         # Drop rows containing the cycles
         microbes_df = microbes_df[
             ~microbes_df["Pathway"].str.endswith(" cycle")
         ]
+        LOGGER.debug(f"Dropped cycles rows: {microbes_df.shape}")
 
         # Convert to numeric
         numeric_cols = [
@@ -459,6 +506,13 @@ class Amils2023DataLoader(BaseDataLoader):
             sheet_name="Filtered OTUs",
             skiprows=11
         )
+
+        LOGGER.info("Loaded emi16291-sup-0005-datasets4.xlsx")
+        LOGGER.info(
+            "Number of entries (wide) - Illumina: "  + \
+            f"{abundances_illumina_df.shape}"
+        )
+
         abundances_roche_df = pd.read_excel(
             os.path.join(
                 self.data_dir,
@@ -466,6 +520,12 @@ class Amils2023DataLoader(BaseDataLoader):
             ),
             sheet_name="DW Filtered OTUs",
             skiprows=11
+        )
+
+        LOGGER.info("Loaded emi16291-sup-0006-datasets5.xlsx")
+        LOGGER.info(
+            "Number of entries (wide) - Roche: "  + \
+            f"{abundances_roche_df.shape}"
         )
 
         # Filter out species also present in the drilling water (possible contamination)
@@ -485,6 +545,12 @@ class Amils2023DataLoader(BaseDataLoader):
         abundances_illumina_df = abundances_illumina_df[
             ["Genus"] + bh_cols_illumina
         ].copy()
+
+        LOGGER.debug(
+            "Filtered genus and sample columns - Illumina: " + \
+            f"{abundances_illumina_df.columns}"
+        )
+
         bh_cols_roche = abundances_roche_df\
             .filter(regex=r"BH10-\d+")\
             .columns\
@@ -493,13 +559,29 @@ class Amils2023DataLoader(BaseDataLoader):
             ["Genus"] + bh_cols_roche
         ].copy()
 
+        LOGGER.debug(
+            "Filtered genus and sample columns - Roche: " + \
+            f"{abundances_roche_df.columns}"
+        )
+
         # Group samples by genus to avoid repeats
         abundances_illumina_df = abundances_illumina_df\
             .groupby("Genus", as_index=False)\
             .sum()
+
+        LOGGER.debug("Grouped samples by genus - Illumina:")
+        LOGGER.debug(
+            "\t" + abundances_illumina_df.to_string().replace("\n", "\n\t")
+        )
+
         abundances_roche_df = abundances_roche_df\
             .groupby("Genus", as_index=False)\
             .sum()
+
+        LOGGER.debug("Grouped samples by genus - Roche:")
+        LOGGER.debug(
+            "\t" + abundances_roche_df.to_string().replace("\n", "\n\t")
+        )
 
         # Get samples in long format for Illumina reads
         abundances_illumina_df = pd.wide_to_long(
@@ -519,9 +601,15 @@ class Amils2023DataLoader(BaseDataLoader):
                 "Sample": "sample_id"
             })
 
-        abundances_illumina_df["sample_id"] = abundances_illumina_df["sample_id"]\
+        abundances_illumina_df["sample_id"] = abundances_illumina_df\
+            ["sample_id"]\
             .apply(lambda row: f"BH10-{str(row)}-Illumina")\
             .astype(str)
+
+        LOGGER.info(
+            "Number of entries (long) - Illumina: "  + \
+            f"{abundances_illumina_df.shape}"
+        )
 
         # Get samples in long format for Roche reads
         abundances_roche_df = pd.wide_to_long(
@@ -541,14 +629,25 @@ class Amils2023DataLoader(BaseDataLoader):
                 "Sample": "sample_id"
             })
 
-        abundances_roche_df["sample_id"] = abundances_roche_df["sample_id"]\
+        abundances_roche_df["sample_id"] = abundances_roche_df\
+            ["sample_id"]\
             .apply(lambda row: f"BH10-{str(row)}-Roche")
+
+        LOGGER.info(
+            "Number of entries (long) - Roche: "  + \
+            f"{abundances_roche_df.shape}"
+        )
 
         # Concatenate
         abundances_df = pd.concat(
             [abundances_illumina_df, abundances_roche_df],
             axis=0,
             ignore_index=True
+        )
+
+        LOGGER.info(
+            "Number of entries (long) - Illumina and Roche: "  + \
+            f"{abundances_df.shape}"
         )
 
         return abundances_df
