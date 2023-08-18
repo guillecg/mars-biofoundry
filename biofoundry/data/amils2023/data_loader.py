@@ -26,14 +26,24 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Amils2023DataLoader(BaseDataLoader):
+    """
+    Auxiliary class for loading data from Amils et al. 2023.
 
-    def __init__(
-        self,
-        data_dir: str = "../data/papers/amils2023/"
-    ) -> None:
+    Parameters
+    ----------
+    config : dict
+        The configuration dictionary.
+
+    Examples
+    --------
+    None
+
+    """
+
+    def __init__(self, config: dict) -> None:
         super().__init__()
 
-        self.data_dir = data_dir
+        self.data_dir = config["paths"]["amils2023"]
 
     def get_elements(self) -> pd.DataFrame:
         """
