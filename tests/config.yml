@@ -1,0 +1,26 @@
+paths:
+  figures: "tests/testdata/figures/"
+  genomes: "tests/testdata/genomes/"
+  metanetx: "tests/testdata/metanetx/"
+  micom: "tests/testdata/micom/"
+  models: "tests/testdata/gem/"
+  modelseed: "tests/testdata/modelseed/"
+  retropath: "tests/testdata/retropath/"
+  retropath_classes: "tests/testdata/retropath_classes/"
+  retrorules: "tests/testdata/retrorules/retrorules_rr01_rp2_flat_forward.csv"
+
+retropath:
+  files:
+    ec_numbers: "ec_numbers.csv"
+    rules: "rules.csv"
+    sink: "sink.csv"
+    sources: "metabolitos_producibles.csv"
+  params:
+    dmax: 16
+    dmin: 6
+    max_steps: 10
+    topx: 100
+    mwmax_source: 1000
+
+figures:
+  template: "plotly_white"

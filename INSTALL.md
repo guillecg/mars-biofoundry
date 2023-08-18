@@ -60,6 +60,12 @@ pip install jupyter ipykernel
 python -m ipykernel install --user
 ```
 
+### 6. Unit testing
+
+```{bash}
+pip install -U pytest
+```
+
 
 ## Second environment: community modeling with MICOM
 
@@ -109,4 +115,10 @@ conda install -c conda-forge openjdk=17.0.3 -y
 ```{bash}
 conda install jupyter ipykernel -y
 python -m ipykernel install --user
+```
+
+### 6. Unit testing
+
+```{bash}
+pip install -U pytest
 ```
