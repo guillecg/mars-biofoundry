@@ -82,7 +82,7 @@ def plot_metabolic_models(
             "Metabolites"
         ],
         var_name="Element",
-        value_name="Counts",
+        value_name="Frequency",
         ignore_index=True,
     )
 
@@ -94,7 +94,7 @@ def plot_metabolic_models(
     fig = px.bar(
         data_frame=plot_df_long,
         x="Species",
-        y="Counts",
+        y="Frequency",
         color="Element",
         barmode="group",
         category_orders={
