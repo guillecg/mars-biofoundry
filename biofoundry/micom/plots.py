@@ -97,10 +97,13 @@ def plot_minimal_medium(
         data_frame=min_medium\
             .sort_values("flux", ascending=False)\
             .head(top_n)\
-            .rename(columns={"reaction": "Reaction", "flux": "Flux"}),
+            .rename(columns={
+                "reaction": "Reaction",
+                "flux": "Flux (mmol/[gCDW·h])"
+            }),
         x="Reaction",
-        y="Flux",
-        color="Flux",
+        y="Flux (mmol/[gCDW·h])",
+        color="Flux (mmol/[gCDW·h])",
         template=config["figures"]["template"]
     )
     fig.update_coloraxes(showscale=False)
@@ -154,7 +157,7 @@ def get_growth_data(config: dict) -> pd.DataFrame:
     # Fix names for plotting
     growth_df = growth_df.rename(columns={
         "compartments": "Species",
-        "growth_rate": "Growth rate",
+        "growth_rate": r"$\text{Growth rate } (h^{-1})$",
         "community_growth_rate": "Community growth rate"
     })
     growth_df["Experiment"] = growth_df["Experiment"]\
@@ -194,7 +197,7 @@ def plot_species_growth(
     fig = px.bar(
         data_frame=growth_df,
         x="Species",
-        y="Growth rate",
+        y=r"$\text{Growth rate } (h^{-1})$",
         color="Experiment",
         barmode="group",
         category_orders={
@@ -240,14 +243,17 @@ def plot_community_growth(
     """
 
     community_plot_df = growth_df[["Experiment", "Community growth rate"]]\
-        .drop_duplicates()
+        .drop_duplicates()\
+        .rename(columns={
+            "Community growth rate": r"$\text{Growth rate } (h^{-1})$"
+        })
 
     fig = px.bar(
         data_frame=community_plot_df,
         x="Experiment",
-        y="Community growth rate",
+        y=r"$\text{Growth rate } (h^{-1})$",
         color="Experiment",
-        text=community_plot_df["Community growth rate"].round(2),
+        text=community_plot_df[r"$\text{Growth rate } (h^{-1})$"].round(2),
         category_orders={
             "Experiment": [
                 "Growth (aerobic)",
