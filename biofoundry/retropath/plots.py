@@ -128,15 +128,20 @@ def plot_retropath_results(
         .value_counts(normalize=True)\
         .apply(lambda row: 100 * row)\
         .reset_index(drop=False)\
-        .rename(columns={"Status": "% Counts", "index": "Status"})
+        .rename(columns={
+            "Status": "Relative frequency (%)",
+            "index": "Status"
+        })
 
     fig = px.bar(
         data_frame=status_counts,
         x="Status",
-        y="% Counts",
+        y="Relative frequency (%)",
         color="Status",
         color_discrete_sequence=px.colors.qualitative.Pastel,
-        text=[f"{i} %" for i in status_counts["% Counts"].round(2)],
+        text=[
+            f"{i} %" for i in status_counts["Relative frequency (%)"].round(2)
+        ],
         template=config["figures"]["template"]
     )
     fig.update_layout(showlegend=False)
@@ -260,8 +265,8 @@ def get_classes_counts(
     return results_class_df\
         .groupby(["Status", "Class"], as_index=False)\
         .count()\
-        .rename(columns={"Source": "Counts"})\
-        .sort_values("Counts", ascending=False)
+        .rename(columns={"Source": "Frequency"})\
+        .sort_values("Frequency", ascending=False)
 
 
 def plot_classes_counts(
@@ -298,11 +303,11 @@ def plot_classes_counts(
 
     fig = px.bar(
         data_frame=counts_df[
-            (counts_df["Counts"] >= counts_thr) &
+            (counts_df["Frequency"] >= counts_thr) &
             (counts_df["Status"] == status)
         ],
         x="Class",
-        y="Counts",
+        y="Frequency",
         color="Class",
         category_orders={
             "Status": [
