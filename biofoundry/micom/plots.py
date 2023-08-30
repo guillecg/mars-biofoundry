@@ -157,7 +157,7 @@ def get_growth_data(config: dict) -> pd.DataFrame:
     # Fix names for plotting
     growth_df = growth_df.rename(columns={
         "compartments": "Species",
-        "growth_rate": r"$\text{Growth rate } (h^{-1})$",
+        "growth_rate": "Growth rate (h⁻¹)",
         "community_growth_rate": "Community growth rate"
     })
     growth_df["Experiment"] = growth_df["Experiment"]\
@@ -197,7 +197,7 @@ def plot_species_growth(
     fig = px.bar(
         data_frame=growth_df,
         x="Species",
-        y=r"$\text{Growth rate } (h^{-1})$",
+        y="Growth rate (h⁻¹)",
         color="Experiment",
         barmode="group",
         category_orders={
@@ -245,15 +245,15 @@ def plot_community_growth(
     community_plot_df = growth_df[["Experiment", "Community growth rate"]]\
         .drop_duplicates()\
         .rename(columns={
-            "Community growth rate": r"$\text{Growth rate } (h^{-1})$"
+            "Community growth rate": "Growth rate (h⁻¹)"
         })
 
     fig = px.bar(
         data_frame=community_plot_df,
         x="Experiment",
-        y=r"$\text{Growth rate } (h^{-1})$",
+        y="Growth rate (h⁻¹)",
         color="Experiment",
-        text=community_plot_df[r"$\text{Growth rate } (h^{-1})$"].round(2),
+        text=community_plot_df["Growth rate (h⁻¹)"].round(2),
         category_orders={
             "Experiment": [
                 "Growth (aerobic)",
