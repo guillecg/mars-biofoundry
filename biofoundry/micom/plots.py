@@ -213,6 +213,7 @@ def plot_species_growth(
         template=config["figures"]["template"],
         width=900
     )
+    fig.update_layout(showlegend=False)
 
     return fig
 
