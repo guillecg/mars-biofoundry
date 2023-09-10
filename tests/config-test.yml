@@ -1,14 +1,5 @@
 paths:
-  amils2023: "tests/testdata/papers/amils2023/"
   figures: "tests/testdata/figures/"
-  genomes: "tests/testdata/genomes/"
-  metanetx: "tests/testdata/metanetx/"
-  micom: "tests/testdata/micom/"
-  models: "tests/testdata/gem/"
-  modelseed: "tests/testdata/modelseed/"
-  retropath: "tests/testdata/retropath/"
-  retropath_classes: "tests/testdata/retropath_classes/"
-  retrorules: "tests/testdata/retrorules/retrorules_rr01_rp2_flat_forward.csv"
 
 retropath:
   files:
