@@ -3,6 +3,7 @@ paths:
   genomes: "tests/testdata/genomes/"
   models: "tests/testdata/gem/"
   modelseed: "tests/testdata/modelseed/"
+  retropath: "tests/testdata/retropath/"
 
 retropath:
   files:

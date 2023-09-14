@@ -5,6 +5,7 @@ import pytest
 import json
 
 import pandas as pd
+from pandas.testing import assert_frame_equal
 
 from biofoundry.retropath.preloader import RetroPathPreloader
 
@@ -23,7 +24,7 @@ def model_path(config: dict) -> str:
 
 
 def test_get_ec_from_model(
-    config: str,
+    config: dict,
     model_path: str,
     preloader: RetroPathPreloader
 ) -> None:
@@ -45,3 +46,32 @@ def test_get_ec_from_model(
 
     assert len(ec_numbers) == 3, "EC numbers were not correctly extracted!"
 
+
+def test_get_ec_numbers(
+    config: dict,
+    metadata_df: pd.DataFrame,
+    preloader: RetroPathPreloader
+) -> None:
+
+    preloader.get_ec_numbers(metadata=metadata_df)
+
+    ec_path = os.path.join(
+        config["paths"]["retropath"],
+        config["retropath"]["files"]["ec_numbers"]
+    )
+    ec_numbers_df = pd.read_csv(ec_path)
+
+    # Clean temporal data
+    os.remove(ec_path)
+
+    ec_path_expected = os.path.join(
+        config["paths"]["retropath"],
+        "expected",
+        config["retropath"]["files"]["ec_numbers"]
+    )
+    ec_numbers_df_expected = pd.read_csv(ec_path_expected)
+
+    assert_frame_equal(
+        left=ec_numbers_df,
+        right=ec_numbers_df_expected
+    )
