@@ -112,3 +112,29 @@ def test_rename_compartments(
 
     assert model_text == model_text_expected, \
         "Compartments are not correctly renamed!"
+
+
+def test_rename_metabolites(
+    model_builder: ModelBuilder,
+    model_path: str
+) -> None:
+
+    model_path_expected = os.path.join(
+        os.path.dirname(model_path),
+        "expected",
+        os.path.basename(model_path)
+    )
+    model_path_expected = model_path_expected.replace(
+        ".json",
+        "_renamed_metabolites.json"
+    )
+
+    with open(model_path, "r") as fh:
+        model_text = fh.read()
+        model_text = model_builder.rename_metabolites(model_text)
+
+    with open(model_path_expected, "r") as fh:
+        model_text_expected = fh.read()
+
+    assert model_text == model_text_expected, \
+        "Metabolites are not correctly renamed!"
