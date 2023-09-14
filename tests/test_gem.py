@@ -76,7 +76,7 @@ def test_format_model(
     )
 
     with open(model_path_formatted, "r") as fh:
-        model_formatted = fh.read()
+        model = fh.read()
 
     with open(model_path_expected, "r") as fh:
         model_expected = fh.read()
@@ -84,5 +84,31 @@ def test_format_model(
     # Clean temporal data
     os.remove(model_path_formatted)
 
-    assert model_expected == model_formatted, \
+    assert model == model_expected, \
         "Model is not correctly formatted!"
+
+
+def test_rename_compartments(
+    model_builder: ModelBuilder,
+    model_path: str
+) -> None:
+
+    model_path_expected = os.path.join(
+        os.path.dirname(model_path),
+        "expected",
+        os.path.basename(model_path)
+    )
+    model_path_expected = model_path_expected.replace(
+        ".json",
+        "_renamed_compartments.json"
+    )
+
+    with open(model_path, "r") as fh:
+        model_text = fh.read()
+        model_text = model_builder.rename_compartments(model_text)
+
+    with open(model_path_expected, "r") as fh:
+        model_text_expected = fh.read()
+
+    assert model_text == model_text_expected, \
+        "Compartments are not correctly renamed!"

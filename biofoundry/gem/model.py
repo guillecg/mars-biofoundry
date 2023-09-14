@@ -206,12 +206,11 @@ class ModelBuilder(BaseModelBuilder):
             .replace("_e0", "_e")\
             .replace('"c0"', '"c"')\
             .replace('"e0"', '"e"')\
-            .replace("\n", "")\
             .replace(
-                '"c":""', '"c":"cytosol"'
+                '"c":""', '"c": "cytosol"'
             )\
             .replace(
-                '"e":""', '"e":"extracellular"'
+                '"e":""', '"e": "extracellular"'
             )
 
     def rename_metabolites(self, model_text: str) -> str:
