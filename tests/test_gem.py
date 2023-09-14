@@ -1,5 +1,7 @@
 import os
 
+import copy
+
 import pytest
 
 import pandas as pd
@@ -148,8 +150,9 @@ def test_rename_metabolites(
 def test_plot_metabolic_models(config: dict) -> None:
 
     # Use expected model JSON file
-    config["paths"]["models"] = os.path.join(
-        config["paths"]["models"],
+    config_modified = copy.deepcopy(config)
+    config_modified["paths"]["models"] = os.path.join(
+        config_modified["paths"]["models"],
         "expected"
     )
 
@@ -160,7 +163,7 @@ def test_plot_metabolic_models(config: dict) -> None:
 
     fig = plot_metabolic_models(
         metadata_df=metadata_df,
-        config=config
+        config=config_modified
     )
 
     assert type(fig) == plotly.graph_objects.Figure, \
