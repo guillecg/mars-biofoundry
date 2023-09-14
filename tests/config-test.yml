@@ -1,6 +1,7 @@
 paths:
   figures: "tests/testdata/figures/"
   genomes: "tests/testdata/genomes/"
+  models: "tests/testdata/gem/"
 
 retropath:
   files:

@@ -44,7 +44,7 @@ class ModelValidator(BaseModelValidator):
     """
 
     @staticmethod
-    def validate_loading(model_path: str) -> None:
+    def validate_loading(model_path: str) -> bool:
         """
         Validate whether the model can be loaded.
 
@@ -55,7 +55,8 @@ class ModelValidator(BaseModelValidator):
 
         Returns
         -------
-        None
+        status : bool
+            Whether the model could be loaded or not.
 
         Examples
         --------
@@ -63,13 +64,21 @@ class ModelValidator(BaseModelValidator):
 
         """
 
+        status = False
+
         try:
             load_json_model(model_path)
             LOGGER.info(f"Correctly loaded {model_path}")
+            status = True
+
         except FileNotFoundError:
             LOGGER.exception(f"Cannot load {model_path}")
+
         else:
             LOGGER.exception(f"Unhandled exception while loading {model_path}")
+
+        return status
+
 
     def validate(self, model_path: str) -> None:
         """
