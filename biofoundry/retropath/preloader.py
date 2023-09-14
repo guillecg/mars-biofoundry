@@ -104,7 +104,7 @@ class RetroPathPreloader(BaseRetroPathPreloader):
 
         Parameters
         ----------
-        metadata : str
+        metadata : pandas.DataFrame
             The dataframe containing the models' paths.
 
         Returns
