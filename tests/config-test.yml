@@ -4,6 +4,7 @@ paths:
   models: "tests/testdata/gem/"
   modelseed: "tests/testdata/modelseed/"
   retropath: "tests/testdata/retropath/"
+  retrorules: "tests/testdata/retrorules/retrorules_rr01_rp2_flat_forward.csv"
 
 retropath:
   files:

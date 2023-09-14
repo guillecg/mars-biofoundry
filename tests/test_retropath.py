@@ -1,5 +1,7 @@
 import os
 
+import copy
+
 import pytest
 
 import json
@@ -53,7 +55,7 @@ def test_get_ec_numbers(
     preloader: RetroPathPreloader
 ) -> None:
 
-    preloader.get_ec_numbers(metadata=metadata_df)
+    _ = preloader.get_ec_numbers(metadata=metadata_df)
 
     ec_path = os.path.join(
         config["paths"]["retropath"],
@@ -74,4 +76,44 @@ def test_get_ec_numbers(
     assert_frame_equal(
         left=ec_numbers_df,
         right=ec_numbers_df_expected
+    )
+
+
+def test_get_rules(
+    config: dict,
+    preloader: RetroPathPreloader
+) -> None:
+
+    # Modify input EC numbers file as the expected one
+    config_modified = copy.deepcopy(config)
+    config_modified["retropath"]["files"]["ec_numbers"] = os.path.join(
+        os.path.dirname(config_modified["retropath"]["files"]["ec_numbers"]),
+        "expected",
+        os.path.basename(config_modified["retropath"]["files"]["ec_numbers"])
+    )
+
+    preloader_modified = copy.deepcopy(preloader)
+    preloader_modified.config = config_modified
+
+    _ = preloader_modified.get_rules()
+
+    rules_path = os.path.join(
+        config["paths"]["retropath"],
+        config["retropath"]["files"]["rules"]
+    )
+    rules_df = pd.read_csv(rules_path)
+
+    # Clean temporal data
+    os.remove(rules_path)
+
+    rules_path_expected = os.path.join(
+        config["paths"]["retropath"],
+        "expected",
+        config["retropath"]["files"]["rules"]
+    )
+    rules_df_expected = pd.read_csv(rules_path_expected)
+
+    assert_frame_equal(
+        left=rules_df,
+        right=rules_df_expected
     )
