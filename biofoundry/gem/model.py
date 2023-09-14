@@ -80,7 +80,7 @@ class ModelValidator(BaseModelValidator):
         return status
 
 
-    def validate(self, model_path: str) -> None:
+    def validate(self, model_path: str) -> bool:
         """
         Validate the model according to a set of predefined checks.
 
@@ -91,7 +91,8 @@ class ModelValidator(BaseModelValidator):
 
         Returns
         -------
-        None
+        status : bool
+            Whether the model passes the validation checks or not.
 
         Examples
         --------
@@ -100,7 +101,9 @@ class ModelValidator(BaseModelValidator):
         """
 
         LOGGER.info(f"Validating model {model_path}")
-        self.validate_loading(model_path)
+        status = self.validate_loading(model_path)
+
+        return status
 
 
 class ModelBuilder(BaseModelBuilder):

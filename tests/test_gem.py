@@ -44,3 +44,11 @@ def test_validate_loading(
 ) -> None:
     assert model_validator.validate_loading(model_path), \
         "Could not load model!"
+
+
+def test_validate(
+    model_validator: ModelValidator,
+    model_path: str
+) -> None:
+    assert model_validator.validate(model_path), \
+        "Model does not pass validation checks!"
