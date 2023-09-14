@@ -164,7 +164,7 @@ def test_get_sink(
     )
 
 
-def test_get_sources(
+def test_get_sources_file_creation(
     config: dict,
     preloader: RetroPathPreloader
 ) -> None:
@@ -173,7 +173,7 @@ def test_get_sources(
 
     sources_dir = os.path.join(
         config["paths"]["retropath"],
-        "interesting_metabolites/sources"
+        "interesting_metabolites/sources/"
     )
     sources_list = os.listdir(sources_dir)
 
@@ -188,3 +188,47 @@ def test_get_sources(
 
     assert len(sources_list) == len(sources_df), \
         "Sources files were not correctly created!"
+
+
+def test_get_sources_inchi(
+    config: dict,
+    preloader: RetroPathPreloader
+) -> None:
+
+    _ = preloader.get_sources()
+
+    sources_dir = os.path.join(
+        config["paths"]["retropath"],
+        "interesting_metabolites/sources/"
+    )
+    sources_list = os.listdir(sources_dir)
+
+    # Clean temporal data
+    for filename in sources_list:
+
+        source = pd.read_csv(
+            os.path.join(
+                sources_dir,
+                filename
+            )
+        )
+
+        source_expected = pd.read_csv(
+            os.path.join(
+                config["paths"]["retropath"],
+                "expected/sources/",
+                filename
+            )
+        )
+
+        assert_frame_equal(
+            left=source,
+            right=source_expected
+        )
+
+        os.remove(
+            os.path.join(
+                sources_dir,
+                filename
+            )
+        )
