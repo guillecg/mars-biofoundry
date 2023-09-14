@@ -1,6 +1,7 @@
 paths:
   figures: "tests/testdata/figures/"
   genomes: "tests/testdata/genomes/"
+  metanetx: "tests/testdata/metanetx/"
   models: "tests/testdata/gem/"
   modelseed: "tests/testdata/modelseed/"
   retropath: "tests/testdata/retropath/"

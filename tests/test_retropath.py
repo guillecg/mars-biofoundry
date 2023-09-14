@@ -84,7 +84,7 @@ def test_get_rules(
     preloader: RetroPathPreloader
 ) -> None:
 
-    # Modify input EC numbers file as the expected one
+    # Change input files by the expected ones
     config_modified = copy.deepcopy(config)
     config_modified["retropath"]["files"]["ec_numbers"] = os.path.join(
         os.path.dirname(config_modified["retropath"]["files"]["ec_numbers"]),
@@ -116,4 +116,49 @@ def test_get_rules(
     assert_frame_equal(
         left=rules_df,
         right=rules_df_expected
+    )
+
+
+def test_get_sink(
+    config: dict,
+    preloader: RetroPathPreloader
+) -> None:
+
+    # Change input files by the expected ones
+    config_modified = copy.deepcopy(config)
+    config_modified["retropath"]["files"]["ec_numbers"] = os.path.join(
+        os.path.dirname(config_modified["retropath"]["files"]["ec_numbers"]),
+        "expected",
+        os.path.basename(config_modified["retropath"]["files"]["ec_numbers"])
+    )
+    config_modified["retropath"]["files"]["rules"] = os.path.join(
+        os.path.dirname(config_modified["retropath"]["files"]["rules"]),
+        "expected",
+        os.path.basename(config_modified["retropath"]["files"]["rules"])
+    )
+
+    preloader_modified = copy.deepcopy(preloader)
+    preloader_modified.config = config_modified
+
+    _ = preloader_modified.get_sink()
+
+    sink_path = os.path.join(
+        config["paths"]["retropath"],
+        config["retropath"]["files"]["sink"]
+    )
+    sink_df = pd.read_csv(sink_path)
+
+    # Clean temporal data
+    os.remove(sink_path)
+
+    sink_path_expected = os.path.join(
+        config["paths"]["retropath"],
+        "expected",
+        config["retropath"]["files"]["sink"]
+    )
+    sink_df_expected = pd.read_csv(sink_path_expected)
+
+    assert_frame_equal(
+        left=sink_df,
+        right=sink_df_expected
     )
