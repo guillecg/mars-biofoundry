@@ -2,10 +2,15 @@ import os
 
 import pytest
 
+import pandas as pd
+
+import plotly
+
 from biofoundry.gem import (
     get_gene_counts,
     ModelValidator,
-    ModelBuilder
+    ModelBuilder,
+    plot_metabolic_models
 )
 
 
@@ -138,3 +143,25 @@ def test_rename_metabolites(
 
     assert model_text == model_text_expected, \
         "Metabolites are not correctly renamed!"
+
+
+def test_plot_metabolic_models(config: dict) -> None:
+
+    # Use expected model JSON file
+    config["paths"]["models"] = os.path.join(
+        config["paths"]["models"],
+        "expected"
+    )
+
+    metadata_df = pd.DataFrame({
+        "Organism": ["organism"],
+        "Genes (annotation)": [2]
+    })
+
+    fig = plot_metabolic_models(
+        metadata_df=metadata_df,
+        config=config
+    )
+
+    assert type(fig) == plotly.graph_objects.Figure, \
+        "Plot was not correctly generated"
