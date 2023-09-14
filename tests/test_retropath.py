@@ -162,3 +162,29 @@ def test_get_sink(
         left=sink_df,
         right=sink_df_expected
     )
+
+
+def test_get_sources(
+    config: dict,
+    preloader: RetroPathPreloader
+) -> None:
+
+    sources_df = preloader.get_sources()
+
+    sources_dir = os.path.join(
+        config["paths"]["retropath"],
+        "interesting_metabolites/sources"
+    )
+    sources_list = os.listdir(sources_dir)
+
+    # Clean temporal data
+    for filename in sources_list:
+        os.remove(
+            os.path.join(
+                sources_dir,
+                filename
+            )
+        )
+
+    assert len(sources_list) == len(sources_df), \
+        "Sources files were not correctly created!"
