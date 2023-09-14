@@ -15,8 +15,14 @@ def model_validator() -> ModelValidator:
 
 
 @pytest.fixture(scope="module")
-def model_builder() -> ModelValidator:
-    return ModelBuilder()
+def model_builder(
+    config: dict,
+    model_validator: ModelValidator
+) -> ModelBuilder:
+    return ModelBuilder(
+        config=config,
+        model_validator=model_validator
+    )
 
 
 @pytest.fixture(scope="module")
@@ -52,3 +58,31 @@ def test_validate(
 ) -> None:
     assert model_validator.validate(model_path), \
         "Model does not pass validation checks!"
+
+
+def test_format_model(
+    model_builder: ModelBuilder,
+    model_path: str
+) -> None:
+    model_path_formatted = model_builder.format_model(model_path)
+    model_path_expected = os.path.join(
+        os.path.dirname(model_path),
+        "expected",
+        os.path.basename(model_path)
+    )
+    model_path_expected = model_path_expected.replace(
+        ".json",
+        "_formatted.json"
+    )
+
+    with open(model_path_formatted, "r") as fh:
+        model_formatted = fh.read()
+
+    with open(model_path_expected, "r") as fh:
+        model_expected = fh.read()
+
+    # Clean temporal data
+    os.remove(model_path_formatted)
+
+    assert model_expected == model_formatted, \
+        "Model is not correctly formatted!"
